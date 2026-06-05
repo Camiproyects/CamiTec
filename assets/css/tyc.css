@@ -1,61 +1,226 @@
-/* ============================= */
-/* TÉRMINOS Y CONDICIONES */
-/* ============================= */
-
 .header.small {
-  padding: 70px 20px;
+  padding: 90px 1.5rem;
+  background: linear-gradient(180deg, rgba(7, 8, 15, 0.96), rgba(12, 13, 26, 0.98));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.tyc {
-  max-width: 820px;
+.header.small .container {
+  display: grid;
+  gap: 1rem;
+}
+
+.header.small h1 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  letter-spacing: -0.03em;
+}
+
+.header.small p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1.02rem;
+  line-height: 1.8;
+  max-width: 760px;
+}
+
+.section {
+  padding: 4rem 0;
+}
+
+.container.tyc {
+  max-width: 860px;
+  margin-inline: auto;
+  padding: 2.5rem 2rem;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.15);
 }
 
 /* TITULOS */
 .tyc h2 {
-  margin-top: 48px;
-  margin-bottom: 14px;
-  font-size: 1.3rem;
-  color: var(--purple-light);
+  margin-top: 2.4rem;
+  margin-bottom: 0.9rem;
+  font-size: 1.45rem;
+  color: #fff;
 }
 
 /* TEXTO */
 .tyc p {
-  margin-bottom: 16px;
-  font-size: 0.95rem;
+  margin-bottom: 1.3rem;
+  font-size: 1rem;
   color: var(--text-secondary);
+  line-height: 1.85;
 }
 
 /* TEXTO DESTACADO */
 .tyc .highlight {
-  background: linear-gradient(180deg, #181529, #0f0d1a);
-  border: 1px solid var(--border-color);
-  border-left: 4px solid var(--purple-main);
-  padding: 18px 20px;
-  border-radius: 12px;
+  background: rgba(139, 92, 246, 0.14);
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  padding: 1.4rem 1.5rem;
+  border-radius: 22px;
   font-weight: 500;
+  color: #f8fafc;
 }
 
 /* LISTAS */
 .tyc ul {
-  margin-left: 20px;
-  margin-top: 12px;
+  margin-left: 1.2rem;
+  margin-top: 1rem;
+  list-style: disc;
+  padding-left: 1rem;
 }
 
 .tyc li {
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 1rem;
+  line-height: 1.75;
 }
 
 /* BOTÓN SECUNDARIO */
 .btn.secondary {
-  margin-top: 40px;
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-muted);
+  margin-top: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.4rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #f8fafc;
+  transition: background 0.25s ease, transform 0.25s ease;
 }
 
 .btn.secondary:hover {
-  background: var(--bg-alt);
-  color: var(--purple-light);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.footer {
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+}
+
+.footer p {
+  margin: 0;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* TABLE OF CONTENTS */
+.tyc .toc {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 1.4rem;
+}
+.tyc .toc a {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+.tyc .toc a:hover,
+.tyc .toc a:focus {
+  color: var(--text-main);
+  background: rgba(139,92,246,0.08);
+  border-color: rgba(139,92,246,0.12);
+  outline: none;
+}
+
+/* PROCESS FLOW */
+.process-flow {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1.6rem 0 2rem;
+}
+.process-step {
+  flex: 1 1 0;
+  background: rgba(255,255,255,0.02);
+  padding: 1rem;
+  border-radius: 14px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.process-step .icon {
+  display: block;
+  margin: 0 auto 0.6rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(139,92,246,0.12);
+  color: var(--purple);
+  display: grid;
+  place-items: center;
+}
+.tyc h2 + .toc { margin-top: 0.6rem; }
+
+/* CARD LAYOUT FOR LEGAL SECTIONS */
+.tyc .section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.tyc .card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 1.15rem;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+.tyc .card h3 {
+  margin: 0 0 0.45rem 0;
+  font-size: 1.05rem;
+}
+
+.tyc .card p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.tyc .icon-svg {
+  width: 36px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 10px;
+  margin-right: 0.6rem;
+  background: rgba(139,92,246,0.08);
+  color: var(--purple);
+}
+
+.tyc .warning {
+  background: rgba(255, 60, 60, 0.06);
+  border: 1px solid rgba(255, 60, 60, 0.12);
+  color: #ffd6d6;
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+/* Small utility */
+.tyc .muted { color: var(--text-muted); font-size: 0.95rem; }
+
+/* Responsive for legal pages */
+@media (max-width: 900px) {
+  .tyc .toc { grid-auto-flow: column; overflow-x: auto; grid-auto-columns: min-content; gap: 0.5rem; }
+  .process-flow { flex-wrap: wrap; gap: 0.6rem; }
+  .process-step { padding: 0.75rem; }
+}
+
+@media (max-width: 480px) {
+  .container.tyc { padding: 1.6rem; border-radius: 20px; }
+  .tyc h2 { font-size: 1.2rem; }
 }

@@ -169,11 +169,14 @@ function actualizarWhatsApp() {
     return;
   }
 
+  const equipoMarca = marcaSelect.options[marcaSelect.selectedIndex]?.text || "";
+  const equipoModelo = modeloSelect.options[modeloSelect.selectedIndex]?.text || "";
+
   const mensaje = `
 Hola TECH-LAG 👋
 Quiero cotizar:
 
-📱 Equipo: ${marcaInput.value} ${modeloInput.value}
+📱 Equipo: ${equipoMarca} ${equipoModelo}
 🛠 Servicio: ${servicioSelect.options[servicioSelect.selectedIndex].text}
 ⭐ Calidad: ${calidadSelect.options[calidadSelect.selectedIndex].text}
 💰 Precio estimado: ${formatCOP(precioActual)}

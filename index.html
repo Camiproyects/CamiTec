@@ -1,277 +1,200 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>TECH-LAG | Servicio Técnico de Celulares en Bogotá</title>
-
-  <!-- SEO -->
-  <meta name="description" content="TECH-LAG - Servicio técnico profesional para celulares en Bogotá. Reparaciones rápidas y cotización en línea.">
-  <meta name="keywords" content="reparación celulares bogotá, servicio técnico celulares, cambio de pantalla">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0e0e16;
-      color: #ddd;
-    }
-
-    a {
-      text-decoration: none;
-    }
-
-    /* ============================= */
-    /* HEADER */
-    /* ============================= */
-
-    .top-header {
-      background: #0b0b12;
-      border-bottom: 1px solid #1f1f2e;
-    }
-
-    .header-container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 22px;
-      font-weight: bold;
-      color: #fff;
-    }
-
-    .logo span {
-      color: #7b5cff;
-    }
-
-    .menu a {
-      color: #cfcfe6;
-      margin-left: 25px;
-      font-size: 14px;
-    }
-
-    .menu a.active {
-      color: #7b5cff;
-    }
-
-    /* ============================= */
-    /* SECCIONES */
-    /* ============================= */
-
-    .section {
-      padding: 60px 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-
-    .section.dark {
-      background: #121224;
-    }
-
-    h2 {
-      color: #fff;
-      margin-bottom: 15px;
-    }
-
-    p {
-      line-height: 1.6;
-      font-size: 15px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-    }
-
-    .card {
-      background: #1a1a2f;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    /* ============================= */
-    /* FOOTER */
-    /* ============================= */
-
-    .footer {
-      background: #0b0b12;
-      padding: 20px;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    .footer a {
-      color: #7b5cff;
-    }
-
-    /* ============================= */
-    /* BLOQUEO DE ACCESO */
-    /* ============================= */
-
-    #access-lock {
-      position: fixed;
-      inset: 0;
-      background: rgba(5, 5, 10, 0.97);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    .access-box {
-      background: #111122;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
-      width: 90%;
-      max-width: 350px;
-    }
-
-    .access-box h2 {
-      color: #fff;
-      margin-bottom: 10px;
-    }
-
-    .access-box p {
-      color: #aaa;
-      font-size: 14px;
-    }
-
-    .access-box input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 15px;
-      border-radius: 5px;
-      border: none;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    .access-box button {
-      margin-top: 15px;
-      width: 100%;
-      padding: 10px;
-      background: #7b5cff;
-      border: none;
-      color: #fff;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #error-msg {
-      color: #ff4d4d;
-      margin-top: 10px;
-      font-size: 13px;
-    }
-  </style>
+  <title>CamiTec — Plataforma premium de servicio técnico</title>
+  <meta name="description" content="CamiTec ofrece servicio técnico premium para dispositivos móviles con diagnóstico profesional y garantía transparente.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
-
 <body>
+  <div class="shell">
+    <header class="header-bar">
+      <div class="container header-inner">
+        <a href="#inicio" class="brand">
+          <span class="brand-mark">C</span>
+          <div>
+            <p class="brand-name">CamiTec</p>
+            <p class="brand-subtitle">Servicio técnico premium</p>
+          </div>
+        </a>
 
-<!-- BLOQUEO DE ACCESO -->
-<div id="access-lock">
-  <div class="access-box">
-    <h2>Acceso restringido</h2>
-    <p>Ingresa el código para continuar</p>
-    <input type="password" id="access-code" placeholder="Código de acceso">
-    <button onclick="verificarAcceso()">Ingresar</button>
-    <p id="error-msg"></p>
+        <nav class="nav-primary" aria-label="Navegación principal">
+          <a href="#inicio" class="nav-link active">Inicio</a>
+          <a href="#cotizador" class="nav-link">Cotizador</a>
+          <a href="#servicios" class="nav-link">Servicios</a>
+          <a href="#reparaciones" class="nav-link">Reparaciones</a>
+          <a href="#contacto" class="nav-link">Contacto</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="cotizador.html" class="btn btn-primary">Cotizar</a>
+          <a href="legal/centro-legal.html" class="btn btn-ghost">Legal</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="inicio" class="hero-section">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <span class="eyebrow">Plataforma técnica</span>
+            <h1>Servicio técnico premium para dispositivos móviles.</h1>
+            <p>Diagnóstico profesional, reparación con garantía y experiencia corporativa para tu equipo.</p>
+            <div class="hero-actions">
+              <button id="main-cta" class="btn btn-primary">Solicitar cotización</button>
+              <a href="#servicios" class="btn btn-secondary">Ver servicios</a>
+            </div>
+            <div class="hero-stats">
+              <div><strong>14h</strong><span>Diagnóstico técnico</span></div>
+              <div><strong>94%</strong><span>Reparaciones exitosas</span></div>
+              <div><strong>4.9/5</strong><span>Valoración promedio</span></div>
+            </div>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <div class="visual-surface">
+              <div class="visual-chip"></div>
+              <div class="visual-bar"></div>
+              <div class="visual-grid"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="cotizador" class="section section-glass">
+        <div class="container section-head">
+          <p class="section-label">Cotizador</p>
+          <h2>Calcula tu reparación de manera clara y veloz.</h2>
+          <p>Elige marca, modelo y servicio para recibir un estimado transparente sin sorpresas.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>Fácil</h3>
+            <p>Interfaz guiada para seleccionar tu servicio en segundos.</p>
+          </article>
+          <article class="feature-card highlight">
+            <h3>Premium</h3>
+            <p>Repuestos y procesos comprobados para resultados confiables.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Transparente</h3>
+            <p>Precios limpios y tiempos claros desde el inicio.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="servicios" class="section">
+        <div class="container section-head">
+          <p class="section-label">Servicios</p>
+          <h2>Soluciones técnicas para cada falla.</h2>
+        </div>
+        <div class="services-grid">
+          <article class="service-card">
+            <div class="service-icon">🔧</div>
+            <h3>Pantallas</h3>
+            <p>Reemplazos con componentes premium y acabado profesional.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon">🔋</div>
+            <h3>Baterías</h3>
+            <p>Instalación segura con pruebas de rendimiento posteriores.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon">⚡</div>
+            <h3>Conectividad</h3>
+            <p>Puertos, carga y audio reparados con precisión técnica.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon">🛠</div>
+            <h3>Diagnóstico</h3>
+            <p>Informe técnico completo antes de cualquier intervención.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="reparaciones" class="section section-glass">
+        <div class="container section-head">
+          <p class="section-label">Reparaciones</p>
+          <h2>Indicadores claros, trabajo con estilo de centro técnico.</h2>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <p class="stat-title">Equipos atendidos</p>
+            <strong>2.492</strong>
+          </div>
+          <div class="stat-card">
+            <p class="stat-title">Tiempo diagnóstico</p>
+            <strong>14h</strong>
+          </div>
+          <div class="stat-card">
+            <p class="stat-title">Satisfacción</p>
+            <strong>4.9/5</strong>
+          </div>
+          <div class="stat-panel">
+            <p class="stat-title">Control de calidad</p>
+            <p>Cada reparación se valida con pruebas y seguimiento documentado.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contacto" class="section">
+        <div class="container section-head">
+          <p class="section-label">Contacto</p>
+          <h2>Coordina tu servicio teniendo toda la información.</h2>
+          <p>Envía tu solicitud, revisa nuestras políticas y recibe una respuesta prioritaria.</p>
+        </div>
+        <div class="contact-layout">
+          <div class="contact-summary">
+            <div class="contact-block">
+              <span>WhatsApp</span>
+              <strong>+57 322 449 4595</strong>
+            </div>
+            <div class="contact-block">
+              <span>Ubicación</span>
+              <strong>Bogotá, Colombia</strong>
+            </div>
+            <div class="contact-block">
+              <span>Horario</span>
+              <strong>Lun - Vie · 9:00 - 18:00</strong>
+            </div>
+            <a href="legal/centro-legal.html" class="link-inline">Ver centro legal</a>
+          </div>
+
+          <form class="contact-form" id="contactForm">
+            <label>Nombre completo</label>
+            <input type="text" name="name" placeholder="Tu nombre" required>
+            <label>Dispositivo</label>
+            <input type="text" name="device" placeholder="Marca y modelo" required>
+            <label>Servicio requerido</label>
+            <select name="service" required>
+              <option value="pantalla">Cambio de pantalla</option>
+              <option value="bateria">Renovación de batería</option>
+              <option value="puertos">Puertos y conectividad</option>
+              <option value="diagnostico">Diagnóstico</option>
+            </select>
+            <label>Mensaje</label>
+            <textarea name="message" rows="5" placeholder="Describe el problema"></textarea>
+            <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-bar">
+      <div class="container footer-inner">
+        <span>© 2026 CamiTec</span>
+        <a href="legal/centro-legal.html" class="footer-link">Centro legal</a>
+      </div>
+    </footer>
+
+    <a href="https://wa.me/573224494595" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+      <span>WhatsApp</span>
+      <em>Chat</em>
+    </a>
   </div>
-</div>
-
-<!-- HEADER -->
-<header class="top-header">
-  <div class="header-container">
-    <div class="logo">
-      TECH<span>-LAG</span>
-    </div>
-
-    <nav class="menu">
-      <a href="#" class="active">Inicio</a>
-      <a href="#nosotros">Conócenos</a>
-      <a href="legal/terminos.html">Legal</a>
-      <a href="cotizador.html">Cotizador</a>
-    </nav>
-  </div>
-</header>
-
-<!-- NOSOTROS -->
-<section id="nosotros" class="section">
-  <h2>Nosotros</h2>
-  <p>
-    En <strong>TECH-LAG</strong> ofrecemos servicio técnico profesional para dispositivos móviles.
-    Diagnosticamos con precisión, explicamos con claridad y reparamos con garantía.
-  </p>
-</section>
-
-<!-- SERVICIOS -->
-<section class="section dark">
-  <h2>Servicios</h2>
-
-  <div class="grid">
-
-    <a href="cotizador.html?servicio=cambio_pantalla" class="card">
-      Cambio de pantalla
-    </a>
-
-    <a href="cotizador.html?servicio=bateria" class="card">
-      Cambio de batería
-    </a>
-
-    <a href="cotizador.html?servicio=puerto" class="card">
-      Puerto de carga
-    </a>
-
-    <a href="cotizador.html?servicio=camaras_audio" class="card">
-      Cámaras y audio
-    </a>
-
-    <a href="cotizador.html?servicio=software" class="card">
-      Software
-    </a>
-
-    <a href="cotizador.html?servicio=diagnostico" class="card">
-      ¿Necesitas un diagnóstico técnico?
-    </a>
-
-  </div>
-</section>
-
-<!-- CONTACTO -->
-<section class="section">
-  <h2>Contacto</h2>
-  <p>📍 Bogotá, Colombia</p>
-  <p>📲 Atención por WhatsApp</p>
-</section>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <p>© TECH-LAG | Servicio Técnico Profesional en Bogotá</p>
-  <a href="legal/terminos.html">Términos</a> |
-  <a href="legal/privacidad.html">Privacidad</a>
-</footer>
-
-<script>
-function verificarAcceso() {
-  const code = document.getElementById("access-code").value;
-  const error = document.getElementById("error-msg");
-
-  if (code === "005") {
-    document.getElementById("access-lock").style.display = "none";
-  } else {
-    error.textContent = "Código incorrecto";
-  }
-}
-</script>
-
+  <script src="assets/js/app.js"></script>
 </body>
 </html>

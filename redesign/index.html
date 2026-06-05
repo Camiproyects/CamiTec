@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CamiTec — Redesign Premium</title>
+  <meta name="description" content="CamiTec — Plataforma premium de servicio técnico para dispositivos móviles">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.v2.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="header-v2" role="banner">
+      <div class="header-inner">
+        <div class="brand-v2">
+          <div class="brand-mark">C</div>
+          <div class="brand-info">
+            <div class="brand-name">CamiTec</div>
+            <div class="brand-sub">Servicio técnico premium</div>
+          </div>
+        </div>
+
+        <nav class="nav-v2" role="navigation" aria-label="Navegación principal">
+          <ul class="nav-list">
+            <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+            <li><a href="#cotizador" class="nav-link">Cotizador</a></li>
+            <li><a href="#servicios" class="nav-link">Servicios</a></li>
+            <li><a href="#reparaciones" class="nav-link">Reparaciones</a></li>
+            <li><a href="#contacto" class="nav-link">Contacto</a></li>
+          </ul>
+        </nav>
+
+        <div class="actions-v2">
+          <button class="btn-primary" id="cta-quote">Cotizar</button>
+          <div class="legal-compact">
+            <button class="legal-open" id="legalOpen" aria-haspopup="true" aria-expanded="false" aria-label="Centro Legal">i</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="inicio" class="hero-v2">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <h1 class="hero-title">Recuperamos la funcionalidad de tu dispositivo con precisión técnica.</h1>
+            <p class="hero-sub">Diagnóstico profesional, repuestos documentados y garantía clara. Transparencia desde la recepción hasta la entrega.</p>
+
+            <div class="hero-ctas">
+              <button class="btn-primary large" id="main-cta">Solicitar Cotización</button>
+              <a href="#servicios" class="btn-ghost">Ver Servicios</a>
+            </div>
+
+            <ul class="hero-benefits">
+              <li><strong>Diagnóstico en 14h</strong><span>Informe técnico detallado</span></li>
+              <li><strong>Repuestos verificados</strong><span>Originales / OEM certificados</span></li>
+              <li><strong>Garantía por servicio</strong><span>Condiciones claras</span></li>
+            </ul>
+          </div>
+
+          <div class="hero-visual" aria-hidden="true">
+            <div class="visual-orb"></div>
+            <div class="visual-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="servicios" class="services-v2">
+        <div class="container">
+          <h2 class="section-title">Servicios</h2>
+          <p class="section-lead">Soluciones técnicas especializadas, presentadas con claridad.</p>
+
+          <div class="services-layout">
+            <div class="service-panel"> <!-- modular panel -->
+              <div class="sp-head"><div class="sp-icon">🔧</div><h3>Pantallas</h3></div>
+              <p>Reemplazo con repuestos verificados y pruebas de calibración de display.</p>
+            </div>
+            <div class="service-panel">
+              <div class="sp-head"><div class="sp-icon">🔋</div><h3>Baterías</h3></div>
+              <p>Cambio y pruebas de rendimiento, certificación post-servicio.</p>
+            </div>
+            <div class="service-panel">
+              <div class="sp-head"><div class="sp-icon">⚡</div><h3>Conectividad</h3></div>
+              <p>Reparación de puertos, diagnóstico de carga y pruebas funcionales.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="reparaciones" class="repairs-v2">
+        <div class="container">
+          <h2 class="section-title">Reparaciones destacadas</h2>
+          <div class="repairs-grid">
+            <div class="dash-card">
+              <div class="dash-head"><h4>Equipos atendidos</h4><div class="dash-value">2.492</div></div>
+              <div class="dash-meta">Tasa de éxito: <strong>94%</strong></div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-head"><h4>Tiempo medio diagnóstico</h4><div class="dash-value">14h</div></div>
+              <div class="dash-meta">Pruebas y reportes técnicos</div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-head"><h4>Satisfacción</h4><div class="dash-value">4.9/5</div></div>
+              <div class="dash-meta">Valoraciones verificadas</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contacto" class="contact-v2">
+        <div class="container">
+          <h2 class="section-title">Contacto</h2>
+          <p class="section-lead">Solicita tu presupuesto o coordina una entrega.</p>
+          <form class="form-v2" id="contactForm">
+            <div class="form-row">
+              <label>Nombre</label>
+              <input type="text" name="name" required>
+            </div>
+            <div class="form-row">
+              <label>Dispositivo</label>
+              <input type="text" name="device" required>
+            </div>
+            <div class="form-row">
+              <label>Mensaje</label>
+              <textarea name="message" rows="4"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Enviar</button>
+              <a href="legal/centro-legal.html" class="btn-ghost">Centro Legal</a>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-v2">
+      <div class="container footer-inner">
+        <div>© CamiTec</div>
+        <nav class="footer-nav"><a href="legal/centro-legal.html">Centro Legal</a></nav>
+      </div>
+    </footer>
+  </div>
+
+  <script src="assets/js/app.v2.js"></script>
+</body>
+</html>
