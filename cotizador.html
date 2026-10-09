@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Cotizador | TECH-LAG</title>
+  <meta name="description" content="Cotiza en tiempo real la reparación de tu celular en TECH-LAG.">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/cotizador.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-content">
+    <div class="logo">TECH<span>-LAG</span></div>
+    <nav class="topbar-nav">
+      <a href="index.html">Inicio</a>
+      <a href="index.html#nosotros">Conócenos</a>
+      <a href="legal/terminos.html">Legal</a>
+      <a href="cotizador.html" class="active">Cotizador</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+
+    <form id="cotizador-form" class="card">
+
+      <h1 class="card-title">Cotizador</h1>
+      <p class="card-subtitle">Selecciona tu equipo y servicio</p>
+
+      <!-- MARCA -->
+      <label for="marca">Marca</label>
+      <select id="marca" required>
+        <option value="">Cargando marcas...</option>
+      </select>
+
+      <!-- MODELO -->
+      <label for="modelo">Modelo</label>
+      <select id="modelo" required disabled>
+        <option value="">Selecciona una marca primero</option>
+      </select>
+
+      <!-- SERVICIO -->
+      <label for="servicio">Servicio</label>
+      <select id="servicio" required disabled>
+        <option value="">Selecciona un modelo primero</option>
+        <option value="cambio_pantalla">Cambio de pantalla</option>
+        <option value="bateria">Cambio de batería</option>
+        <option value="puerto">Puerto de carga</option>
+        <option value="software">Software</option>
+        <option value="diagnostico">Diagnóstico</option>
+      </select>
+
+      <!-- CALIDAD -->
+      <label for="calidad">Calidad del repuesto</label>
+      <select id="calidad" required disabled>
+        <option value="">Selecciona servicio primero</option>
+        <option value="generica">Genérica</option>
+        <option value="oem">OEM / Premium</option>
+        <option value="original">Original</option>
+      </select>
+
+      <p class="hint">
+        La calidad influye en el precio, durabilidad y experiencia del repuesto.
+      </p>
+
+      <div class="resultado">
+        <span>Total estimado</span>
+        <h2 id="precio">$0 COP</h2>
+        <small>* Valor estimado, sujeto a diagnóstico físico</small>
+      </div>
+
+<!-- ACEPTACIÓN TYC -->
+<label class="tyc-check">
+  <input type="checkbox" id="acepta-tyc">
+  <span>
+    Acepto los
+    <a href="legal/terminos.html" target="_blank">
+      Términos y Condiciones
+    </a>
+  </span>
+</label>
+
+      <a id="whatsapp-btn" class="whatsapp-btn" href="#" target="_blank">
+        Solicitar por WhatsApp
+      </a>
+
+    </form>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <a href="index.html">← Volver al inicio</a>
+  </div>
+</footer>
+
+<script src="assets/js/cotizador.js"></script>
+
+</body>
+</html>

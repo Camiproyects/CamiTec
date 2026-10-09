@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>TECH-LAG | Administrador</title>
+
+    <link
+        rel="stylesheet"
+        href="/assets/css/admin.css"
+    >
+
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- BARRA LATERAL -->
+
+        <aside class="admin-sidebar">
+
+            <div class="admin-logo">
+                TECH<span>-LAG</span>
+            </div>
+
+            <p class="admin-label">
+                ADMINISTRACIÓN
+            </p>
+
+            <nav class="admin-nav">
+
+                <button
+                    class="nav-item active"
+                    data-section="dashboard"
+                >
+                    Dashboard
+                </button>
+
+                <button
+                    class="nav-item"
+                    data-section="marcas"
+                >
+                    Marcas
+                </button>
+
+                <button
+                    class="nav-item"
+                    data-section="modelos"
+                >
+                    Modelos
+                </button>
+
+                <button
+                    class="nav-item"
+                    data-section="servicios"
+                >
+                    Servicios
+                </button>
+
+                <button
+                    class="nav-item"
+                    data-section="precios"
+                >
+                    Precios
+                </button>
+
+                <button
+                    class="nav-item"
+                    data-section="errores"
+                >
+                    Centro de errores
+                </button>
+
+            </nav>
+
+            <button
+                id="logoutButton"
+                class="logout-button"
+            >
+                Cerrar sesión
+            </button>
+
+        </aside>
+
+
+        <!-- CONTENIDO -->
+
+        <main class="admin-content">
+
+            <header class="admin-header">
+
+                <div>
+                    <h1 id="sectionTitle">
+                        Dashboard
+                    </h1>
+
+                    <p>
+                        Administración de TECH-LAG
+                    </p>
+                </div>
+
+            </header>
+
+
+            <!-- DASHBOARD -->
+
+            <section
+                id="section-dashboard"
+                class="admin-section active"
+            >
+
+                <div class="stats-grid">
+
+                    <article class="stat-card">
+                        <span>Marcas</span>
+                        <strong id="totalMarcas">0</strong>
+                    </article>
+
+                    <article class="stat-card">
+                        <span>Modelos</span>
+                        <strong id="totalModelos">0</strong>
+                    </article>
+
+                    <article class="stat-card">
+                        <span>Servicios</span>
+                        <strong id="totalServicios">0</strong>
+                    </article>
+
+                    <article class="stat-card">
+                        <span>Precios</span>
+                        <strong id="totalPrecios">0</strong>
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- MARCAS -->
+
+            <section
+                id="section-marcas"
+                class="admin-section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Marcas</h2>
+                        <p>Marcas disponibles en el cotizador.</p>
+                    </div>
+
+                    <button id="addMarcaButton">
+                        + Agregar marca
+                    </button>
+
+                </div>
+
+                <div id="marcasContainer"></div>
+
+            </section>
+
+
+            <!-- MODELOS -->
+
+            <section
+                id="section-modelos"
+                class="admin-section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Modelos</h2>
+                        <p>Modelos registrados.</p>
+                    </div>
+
+                    <button id="addModeloButton">
+                        + Agregar modelo
+                    </button>
+
+                </div>
+
+                <div id="modelosContainer"></div>
+
+            </section>
+
+
+            <!-- SERVICIOS -->
+
+            <section
+                id="section-servicios"
+                class="admin-section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Servicios</h2>
+                        <p>Servicios disponibles para cotización.</p>
+                    </div>
+
+                    <button id="addServicioButton">
+                        + Agregar servicio
+                    </button>
+
+                </div>
+
+                <div id="serviciosContainer"></div>
+
+            </section>
+
+
+            <!-- CENTRO DE ERRORES -->
+            <section id="section-errores" class="admin-section">
+                <div class="section-header">
+                    <div>
+                        <h2>Centro de errores</h2>
+                        <p>Incidentes HTTP registrados por el servidor. Se guardan solo fecha, código, método y ruta; no se almacenan tokens ni contraseñas.</p>
+                    </div>
+                    <div class="error-toolbar">
+                        <button type="button" id="refreshErrorsButton" class="secondary-button">Actualizar</button>
+                        <button type="button" id="clearErrorsButton" class="danger-button">Limpiar registros</button>
+                    </div>
+                </div>
+                <div class="error-stats-grid" id="errorStats">
+                    <article class="stat-card"><span>Errores registrados</span><strong id="errorTotal">0</strong></article>
+                    <article class="stat-card"><span>Errores 404</span><strong id="error404">0</strong></article>
+                    <article class="stat-card"><span>Errores 401 / 403</span><strong id="errorAuth">0</strong></article>
+                    <article class="stat-card"><span>Errores 500</span><strong id="error500">0</strong></article>
+                </div>
+                <div id="errorsContainer" class="errors-container">
+                    <p>Selecciona esta sección para cargar los registros.</p>
+                </div>
+                <p class="error-retention-note">Retención automática: hasta 30 días y 2.000 eventos; la vista muestra como máximo los 500 más recientes.</p>
+            </section>
+
+            <!-- PRECIOS -->
+
+            <section
+                id="section-precios"
+                class="admin-section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Precios</h2>
+                        <p>
+                            Modifica los precios utilizados por el cotizador.
+                        </p>
+                    </div>
+
+                    <button id="savePricesButton">
+                        Guardar cambios
+                    </button>
+
+                </div>
+
+                <div class="search-box">
+
+                    <input
+                        type="search"
+                        id="priceSearch"
+                        placeholder="Buscar marca, modelo o servicio..."
+                    >
+
+                </div>
+
+                <div id="preciosContainer"></div>
+
+            </section>
+
+
+            <div
+                id="adminMessage"
+                class="admin-message"
+            ></div>
+
+        </main>
+
+    </div>
+
+    <!-- =========================================
+     MODAL DE REGISTRO
+========================================= -->
+
+<div id="catalogModal" class="catalog-modal">
+
+    <div class="catalog-modal-backdrop"></div>
+
+    <div class="catalog-modal-card">
+
+        <div class="catalog-modal-header">
+
+            <div>
+                <span class="modal-eyebrow">
+                    CATÁLOGO TECH-LAG
+                </span>
+
+                <h2 id="modalTitle">
+                    Agregar registro
+                </h2>
+            </div>
+
+            <button
+                type="button"
+                id="closeModalButton"
+                class="modal-close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="catalogForm">
+
+            <input
+                type="hidden"
+                id="editIndex"
+                value=""
+            >
+
+
+            <div class="modal-form-grid">
+
+                <div class="modal-form-group">
+
+                    <label for="formMarca">
+                        Marca
+                    </label>
+
+                    <input
+                        type="text"
+                        id="formMarca"
+                        maxlength="80"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="modal-form-group">
+
+                    <label for="formModelo">
+                        Modelo
+                    </label>
+
+                    <input
+                        type="text"
+                        id="formModelo"
+                        maxlength="100"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="modal-form-group">
+
+                    <label for="formServicio">
+                        Servicio
+                    </label>
+
+                    <input
+                        type="text"
+                        id="formServicio"
+                        maxlength="80"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="modal-form-group">
+
+                    <label for="formCalidad">
+                        Calidad
+                    </label>
+
+                    <select
+                        id="formCalidad"
+                        required
+                    >
+
+                        <option value="generica">
+                            Genérica
+                        </option>
+
+                        <option value="oem">
+                            OEM / Premium
+                        </option>
+
+                        <option value="original">
+                            Original
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="modal-form-group modal-price-group">
+
+                    <label for="formPrecio">
+                        Precio
+                    </label>
+
+                    <input
+                        type="number"
+                        id="formPrecio"
+                        min="0"
+                        max="100000000"
+                        step="1"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="modalError"
+                class="modal-error"
+            ></div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelModalButton"
+                    class="modal-cancel"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    type="submit"
+                    class="modal-save"
+                >
+                    Guardar registro
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+    <script src="/assets/js/admin.js"></script>
+
+</body>
+
+</html>

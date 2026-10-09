@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centro Legal — CamiTec</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    body { background: #04050b; color: #f5f7ff; margin: 0; font-family: 'Inter', sans-serif; }
+    .legal-shell { display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; min-height: 100vh; padding: 2.5rem; }
+    .legal-side { position: sticky; top: 2rem; border-radius: 28px; background: rgba(255,255,255,0.04); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.08); }
+    .legal-side h3 { margin-top: 0; }
+    .muted { color: #a8b1cf; margin: 0.5rem 0 1.5rem; }
+    .toc-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
+    .toc-list a { display: block; padding: 0.95rem 1rem; border-radius: 14px; color: #dfe5ff; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); }
+    .toc-list a.active { background: rgba(142,81,243,0.16); color: #fff; }
+    .legal-main { border-radius: 32px; background: rgba(255,255,255,0.04); padding: 2rem; border: 1px solid rgba(255,255,255,0.08); }
+    section { margin-bottom: 1.6rem; }
+    h4 { margin: 0 0 0.9rem; font-size: 1.25rem; }
+    .accordion { border-top: 1px solid rgba(255,255,255,0.08); }
+    .accordion button { width: 100%; text-align: left; padding: 1rem; border: none; background: transparent; color: #f5f7ff; font-weight: 700; cursor: pointer; }
+    .accordion button:hover { background: rgba(142,81,243,0.08); }
+    .panel { padding: 0 1rem 1rem; color: #b8c0dc; }
+    @media (max-width: 900px) { .legal-shell { grid-template-columns: 1fr; padding: 1.2rem; } .legal-side { position: relative; top: auto; } }
+  </style>
+</head>
+<body>
+  <div class="legal-shell">
+    <aside class="legal-side">
+      <h3>Centro Legal</h3>
+      <p class="muted">Revisa nuestras condiciones principales.</p>
+      <ul class="toc-list">
+        <li><a href="#alcance" class="active">Alcance</a></li>
+        <li><a href="#recepcion">Recepción</a></li>
+        <li><a href="#respaldo">Respaldo</a></li>
+        <li><a href="#diagnostico">Diagnóstico</a></li>
+        <li><a href="#repuestos">Repuestos</a></li>
+        <li><a href="#garantias">Garantías</a></li>
+      </ul>
+      <a href="terminos.html" class="btn btn-secondary" style="margin-top:1.5rem; display:inline-flex;">Términos completos</a>
+    </aside>
+
+    <main class="legal-main">
+      <section id="alcance">
+        <h4>Alcance</h4>
+        <div class="accordion">
+          <button aria-expanded="false">Servicios cubiertos</button>
+          <div class="panel" hidden>Reparación y mantenimiento técnico de dispositivos móviles, diagnóstico y gestión de repuestos.</div>
+        </div>
+      </section>
+
+      <section id="recepcion">
+        <h4>Recepción</h4>
+        <div class="accordion">
+          <button aria-expanded="false">Registro inicial</button>
+          <div class="panel" hidden>Al recibir el equipo, se documenta el estado visible y cualquier daño previo.</div>
+        </div>
+      </section>
+
+      <section id="respaldo">
+        <h4>Respaldo</h4>
+        <div class="accordion">
+          <button aria-expanded="false">Responsabilidad de datos</button>
+          <div class="panel" hidden>El cliente debe respaldar su información antes de entregar el equipo; CamiTec no es responsable por pérdida de datos.</div>
+        </div>
+      </section>
+
+      <section id="diagnostico">
+        <h4>Diagnóstico</h4>
+        <div class="accordion">
+          <button aria-expanded="false">Alcance del diagnóstico</button>
+          <div class="panel" hidden>El diagnóstico identifica fallas y propone opciones de reparación; no garantiza recuperación en todos los casos.</div>
+        </div>
+      </section>
+
+      <section id="repuestos">
+        <h4>Repuestos</h4>
+        <div class="accordion">
+          <button aria-expanded="false">Tipos de repuestos</button>
+          <div class="panel" hidden>Se usan repuestos originales, OEM o compatibles según disponibilidad y preferencia del cliente.</div>
+        </div>
+      </section>
+
+      <section id="garantias">
+        <h4>Garantías</h4>
+        <div class="accordion">
+          <button aria-expanded="false">Condiciones de garantía</button>
+          <div class="panel" hidden>La garantía depende del servicio y repuesto; no cubre daños por agua, golpes o manipulación externa posterior.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll('.accordion button').forEach((button) => {
+      button.addEventListener('click', () => {
+        const panel = button.nextElementSibling;
+        const isOpen = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!isOpen));
+        if (panel) {
+          panel.hidden = isOpen;
+        }
+      });
+    });
+
+    document.querySelectorAll('.toc-list a').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        document.querySelectorAll('.toc-list a').forEach((item) => item.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

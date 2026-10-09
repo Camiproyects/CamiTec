@@ -1,0 +1,70 @@
+marca,modelo,servicio,calidad,precio
+Samsung,Galaxy A10,cambio_pantalla,generica,65000
+Samsung,Galaxy A10,cambio_pantalla,oem,130000
+Samsung,Galaxy A10,cambio_pantalla,original,260000
+Samsung,Galaxy A20,cambio_pantalla,generica,75000
+Samsung,Galaxy A20,cambio_pantalla,oem,140000
+Samsung,Galaxy A20,cambio_pantalla,original,280000
+Samsung,Galaxy A30,cambio_pantalla,generica,80000
+Samsung,Galaxy A30,cambio_pantalla,oem,150000
+Samsung,Galaxy A30,cambio_pantalla,original,300000
+Samsung,Galaxy A50,cambio_pantalla,generica,90000
+Samsung,Galaxy A50,cambio_pantalla,oem,170000
+Samsung,Galaxy A50,cambio_pantalla,original,340000
+Samsung,Galaxy A51,cambio_pantalla,generica,90000
+Samsung,Galaxy A51,cambio_pantalla,oem,180000
+Samsung,Galaxy A51,cambio_pantalla,original,360000
+Samsung,Galaxy A52,cambio_pantalla,generica,95000
+Samsung,Galaxy A52,cambio_pantalla,oem,180000
+Samsung,Galaxy A52,cambio_pantalla,original,380000
+Samsung,Galaxy A53,cambio_pantalla,generica,100000
+Samsung,Galaxy A53,cambio_pantalla,oem,190000
+Samsung,Galaxy A53,cambio_pantalla,original,420000
+Samsung,Galaxy S20,cambio_pantalla,oem,220000
+Samsung,Galaxy S20,cambio_pantalla,original,650000
+Samsung,Galaxy S21,cambio_pantalla,oem,240000
+Samsung,Galaxy S21,cambio_pantalla,original,720000
+Apple,iPhone 8,cambio_pantalla,generica,90000
+Apple,iPhone 8,cambio_pantalla,oem,160000
+Apple,iPhone 8,cambio_pantalla,original,320000
+Apple,iPhone X,cambio_pantalla,generica,120000
+Apple,iPhone X,cambio_pantalla,oem,190000
+Apple,iPhone X,cambio_pantalla,original,450000
+Apple,iPhone XR,cambio_pantalla,generica,130000
+Apple,iPhone XR,cambio_pantalla,oem,210000
+Apple,iPhone XR,cambio_pantalla,original,480000
+Apple,iPhone 11,cambio_pantalla,generica,150000
+Apple,iPhone 11,cambio_pantalla,oem,240000
+Apple,iPhone 11,cambio_pantalla,original,550000
+Apple,iPhone 12,cambio_pantalla,oem,280000
+Apple,iPhone 12,cambio_pantalla,original,720000
+Xiaomi,Redmi 9A,cambio_pantalla,generica,65000
+Xiaomi,Redmi 9A,cambio_pantalla,oem,120000
+Xiaomi,Redmi 9C,cambio_pantalla,generica,70000
+Xiaomi,Redmi 9C,cambio_pantalla,oem,130000
+Xiaomi,Redmi Note 8,cambio_pantalla,generica,80000
+Xiaomi,Redmi Note 8,cambio_pantalla,oem,150000
+Xiaomi,Redmi Note 9,cambio_pantalla,generica,85000
+Xiaomi,Redmi Note 9,cambio_pantalla,oem,160000
+Xiaomi,Redmi Note 10,cambio_pantalla,generica,90000
+Xiaomi,Redmi Note 10,cambio_pantalla,oem,170000
+Motorola,Moto G8 Power,cambio_pantalla,generica,85000
+Motorola,Moto G8 Power,cambio_pantalla,oem,150000
+Motorola,Moto G9 Play,cambio_pantalla,generica,90000
+Motorola,Moto G9 Play,cambio_pantalla,oem,160000
+Motorola,Moto G20,cambio_pantalla,generica,85000
+Motorola,Moto G20,cambio_pantalla,oem,150000
+Motorola,Moto G30,cambio_pantalla,generica,90000
+Motorola,Moto G30,cambio_pantalla,oem,170000
+Huawei,Y9 2019,cambio_pantalla,generica,85000
+Huawei,Y9 2019,cambio_pantalla,oem,150000
+Huawei,P30 Lite,cambio_pantalla,generica,90000
+Huawei,P30 Lite,cambio_pantalla,oem,170000
+Oppo,A15,cambio_pantalla,generica,80000
+Oppo,A15,cambio_pantalla,oem,150000
+Oppo,A54,cambio_pantalla,generica,90000
+Oppo,A54,cambio_pantalla,oem,170000
+Realme,C11,cambio_pantalla,generica,75000
+Realme,C11,cambio_pantalla,oem,140000
+Realme,C25,cambio_pantalla,generica,85000
+Realme,C25,cambio_pantalla,oem,160000
