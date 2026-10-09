@@ -1,8 +1,0 @@
-{"id":"7b7081b1eb8870c7","timestamp":"2026-10-09T02:41:20.139Z","status":404,"method":"GET","path":"/esta-ruta-no-existe","message":"Recurso no encontrado"}
-{"id":"6e1f3b3f9026526d","timestamp":"2026-10-09T03:45:46.697Z","status":401,"method":"GET","path":"/admin/","message":"No autenticado"}
-{"id":"9fedf71cc439b5c2","timestamp":"2026-10-09T03:45:56.614Z","status":404,"method":"GET","path":"/data.csv","message":"Recurso no encontrado"}
-{"id":"42f6414a672f1edd","timestamp":"2026-10-09T03:46:27.887Z","status":404,"method":"GET","path":"/esta-ruta-no-existe","message":"Recurso no encontrado"}
-{"id":"12f6780ff61b7c48","timestamp":"2026-10-09T03:51:05.751Z","status":404,"method":"GET","path":"/esta-ruta-no-existe","message":"Recurso no encontrado"}
-{"id":"8f4489e3661f7102","timestamp":"2026-10-09T03:56:42.864Z","status":404,"method":"GET","path":"/esta-ruta-no-existe","message":"Recurso no encontrado"}
-{"id":"cf7ab5d4f521d122","timestamp":"2026-10-09T03:56:46.129Z","status":404,"method":"GET","path":"/esta-ruta-no-existe","message":"Recurso no encontrado"}
-{"id":"67cfe5be848489cc","timestamp":"2026-10-09T03:56:46.432Z","status":404,"method":"GET","path":"/favicon.ico","message":"Recurso no encontrado"}
