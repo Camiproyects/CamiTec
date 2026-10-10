@@ -53,6 +53,21 @@ const MIME_TYPES = {
   '.woff2': 'font/woff2'
 };
 
+// Archivos estáticos públicos permitidos. No se exponen carpetas completas.
+// Si agregas un CSS, JS o imagen nuevo, añádelo aquí con su ruta exacta.
+const STATIC_FILE_ROUTES = new Map([
+  ['/assets/css/style.css', 'assets/css/style.css'],
+  ['/assets/css/cotizador.css', 'assets/css/cotizador.css'],
+  ['/assets/css/admin.css', 'assets/css/admin.css'],
+  ['/assets/css/tyc.css', 'assets/css/tyc.css'],
+  ['/assets/css/404.css', 'assets/css/404.css'],
+  ['/assets/js/app.js', 'assets/js/app.js'],
+  ['/assets/js/cotizador.js', 'assets/js/cotizador.js'],
+  ['/assets/js/login.js', 'assets/js/login.js'],
+  ['/assets/js/admin.js', 'assets/js/admin.js'],
+  ['/assets/img/techlag-404.png', 'assets/img/techlag-404.png']
+]);
+
 if (!ADMIN_PASSWORD_HASH) {
   console.error('ERROR: Falta ADMIN_PASSWORD_HASH en .env');
   process.exit(1);
@@ -63,7 +78,6 @@ if (!/^scrypt:[a-f0-9]+:[a-f0-9]{128}$/i.test(ADMIN_PASSWORD_HASH)) {
 }
 if (!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR, { recursive: true });
 if (!fs.existsSync(LOG_DIR)) fs.mkdirSync(LOG_DIR, { recursive: true });
-
 
 function errorLabel(statusCode) {
   const labels = {
@@ -85,7 +99,9 @@ function readErrorLog() {
     return fs.readFileSync(ERROR_LOG_FILE, 'utf8')
       .split(/\r?\n/)
       .filter(Boolean)
-      .map(line => { try { return JSON.parse(line); } catch { return null; } })
+      .map(line => {
+        try { return JSON.parse(line); } catch { return null; }
+      })
       .filter(Boolean);
   } catch (error) {
     console.error('No se pudo leer el registro de errores:', error.message);
@@ -98,8 +114,13 @@ function pruneErrorLog() {
   const entries = readErrorLog()
     .filter(item => Number.isFinite(Date.parse(item.timestamp)) && Date.parse(item.timestamp) >= cutoff)
     .slice(-MAX_ERROR_LOG_ENTRIES);
+
   try {
-    fs.writeFileSync(ERROR_LOG_FILE, entries.map(item => JSON.stringify(item)).join('\n') + (entries.length ? '\n' : ''), { encoding: 'utf8', mode: 0o600 });
+    fs.writeFileSync(
+      ERROR_LOG_FILE,
+      entries.map(item => JSON.stringify(item)).join('\n') + (entries.length ? '\n' : ''),
+      { encoding: 'utf8', mode: 0o600 }
+    );
   } catch (error) {
     console.error('No se pudo depurar el registro de errores:', error.message);
   }
@@ -107,6 +128,8 @@ function pruneErrorLog() {
 
 function recordHttpError(entry) {
   try {
+    // Solo se guardan datos técnicos mínimos. No se registran query strings,
+    // cuerpos de solicitudes, cookies, contraseñas ni tokens.
     const safeEntry = {
       id: crypto.randomBytes(8).toString('hex'),
       timestamp: new Date().toISOString(),
@@ -115,18 +138,25 @@ function recordHttpError(entry) {
       path: String(entry.path || '/').slice(0, 180),
       message: errorLabel(Number(entry.status) || 500)
     };
-    fs.appendFileSync(ERROR_LOG_FILE, JSON.stringify(safeEntry) + '\n', { encoding: 'utf8', mode: 0o600 });
+
+    fs.appendFileSync(ERROR_LOG_FILE, JSON.stringify(safeEntry) + '\n', {
+      encoding: 'utf8',
+      mode: 0o600
+    });
+
     const stat = fs.statSync(ERROR_LOG_FILE);
     if (stat.size > MAX_ERROR_LOG_BYTES) pruneErrorLog();
   } catch (error) {
-    // El fallo del registro no debe derribar el servidor ni revelar detalles al visitante.
+    // El fallo del registro no debe detener el servidor.
     console.error('No se pudo registrar un error HTTP:', error.message);
   }
 }
 
 function errorSummary(entries) {
   const counts = {};
-  for (const entry of entries) counts[entry.status] = (counts[entry.status] || 0) + 1;
+  for (const entry of entries) {
+    counts[entry.status] = (counts[entry.status] || 0) + 1;
+  }
   return Object.entries(counts)
     .map(([status, count]) => ({ status: Number(status), count }))
     .sort((a, b) => b.count - a.count);
@@ -190,20 +220,53 @@ function sendText(res, statusCode, text, contentType = 'text/plain; charset=utf-
   res.end(text);
 }
 
+function sendNotFound(res) {
+  if (res.headersSent || res.destroyed) return;
+
+  const errorPage = path.join(ROOT, '404.html');
+  let html;
+  try {
+    html = fs.readFileSync(errorPage, 'utf8');
+  } catch {
+    sendText(res, 404, 'Página no encontrada');
+    return;
+  }
+
+  res.statusCode = 404;
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-store');
+  res.end(html);
+}
+
 function serveFile(res, filePath) {
   const resolved = path.resolve(filePath);
   if (!resolved.startsWith(ROOT + path.sep) && resolved !== path.join(ROOT, 'index.html')) {
-    sendText(res, 403, 'Acceso denegado');
+    sendNotFound(res);
     return;
   }
+
   let stat;
-  try { stat = fs.statSync(resolved); } catch { sendText(res, 404, 'Página no encontrada'); return; }
-  if (!stat.isFile()) { sendText(res, 404, 'Página no encontrada'); return; }
+  try {
+    stat = fs.statSync(resolved);
+  } catch {
+    sendNotFound(res);
+    return;
+  }
+
+  if (!stat.isFile()) {
+    sendNotFound(res);
+    return;
+  }
+
   res.statusCode = 200;
   res.setHeader('Content-Type', MIME_TYPES[path.extname(resolved).toLowerCase()] || 'application/octet-stream');
   res.setHeader('Cache-Control', 'no-cache');
+
   const stream = fs.createReadStream(resolved);
-  stream.on('error', () => { if (!res.headersSent) sendText(res, 500, 'Error al leer el archivo'); else res.destroy(); });
+  stream.on('error', () => {
+    if (!res.headersSent) sendText(res, 500, 'Error al leer el archivo');
+    else res.destroy();
+  });
   stream.pipe(res);
 }
 
@@ -378,6 +441,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/admin/errores' && req.method === 'GET') {
       const session = requireAuth(req, res);
       if (!session) return;
+
       pruneErrorLog();
       const entries = readErrorLog().slice(-500).reverse();
       sendJSON(res, 200, {
@@ -391,7 +455,11 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/admin/errores' && req.method === 'DELETE') {
       const session = requireAuth(req, res);
       if (!session) return;
-      if (!checkCSRF(req, session)) { sendJSON(res, 403, { error: 'CSRF inválido' }); return; }
+      if (!checkCSRF(req, session)) {
+        sendJSON(res, 403, { error: 'CSRF inválido' });
+        return;
+      }
+
       fs.writeFileSync(ERROR_LOG_FILE, '', { encoding: 'utf8', mode: 0o600 });
       sendJSON(res, 200, { success: true });
       return;
@@ -435,12 +503,37 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    if (pathname === '/admin' || pathname === '/admin/') {
-      const session = requireAuth(req, res);
-      if (!session) return;
+    // Navegación al panel: si no hay sesión, mostrar el formulario de acceso.
+    // Las rutas API siguen usando requireAuth() y responden 401 en JSON.
+    if ((pathname === '/admin' || pathname === '/admin/') && req.method === 'GET') {
+      const sessionId = parseCookies(req).techlag_session;
+      const session = sessions.get(sessionId);
+
+      if (!session || Date.now() >= session.expiresAt) {
+        if (sessionId) sessions.delete(sessionId);
+        res.statusCode = 302;
+        res.setHeader('Location', '/admin/login');
+        res.setHeader('Cache-Control', 'no-store');
+        res.end();
+        return;
+      }
+
       serveFile(res, path.join(ROOT, 'admin', 'admin.html'));
       return;
     }
+    // Si no hay favicon implementado, responder sin contenido en vez de 404.
+    // Si luego agregas favicon.ico a la raíz, se podrá servir desde esta ruta.
+    if (pathname === '/favicon.ico' && req.method === 'GET') {
+      const faviconPath = path.join(ROOT, 'favicon.ico');
+      if (fs.existsSync(faviconPath) && fs.statSync(faviconPath).isFile()) {
+        serveFile(res, faviconPath);
+      } else {
+        res.statusCode = 204;
+        res.end();
+      }
+      return;
+    }
+
     if (pathname === '/admin/login' || pathname === '/admin/login.html') {
       serveFile(res, path.join(ROOT, 'admin', 'login.html'));
       return;
@@ -464,30 +557,21 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    // Archivos estáticos permitidos por lista de carpetas; nunca se expone data.csv ni .env.
-    if (pathname.startsWith('/assets/') || pathname.startsWith('/legal/')) {
-      const baseDir = pathname.startsWith('/assets/') ? path.join(ROOT, 'assets') : path.join(ROOT, 'legal');
-      const relativePath = pathname.replace(pathname.startsWith('/assets/') ? /^\/assets\// : /^\/legal\//, '');
-      const requested = path.resolve(baseDir, relativePath);
-      if (!requested.startsWith(baseDir + path.sep)) { sendText(res, 403, 'Acceso denegado'); return; }
-      serveFile(res, requested);
+    // Solo se sirven los recursos estáticos enumerados arriba por su ruta exacta.
+    if (STATIC_FILE_ROUTES.has(pathname)) {
+      serveFile(res, path.join(ROOT, STATIC_FILE_ROUTES.get(pathname)));
       return;
     }
 
-    
-const errorPage = path.join(ROOT, '404.html');
+    // API desconocida: conservar respuesta JSON para clientes y llamadas fetch.
+    if (pathname === '/api' || pathname.startsWith('/api/')) {
+      sendJSON(res, 404, { error: 'Recurso no encontrado' });
+      return;
+    }
 
-try {
-  const html = fs.readFileSync(errorPage, 'utf8');
-  res.writeHead(404, {
-    'Content-Type': 'text/html; charset=utf-8',
-    'Cache-Control': 'no-store'
-  });
-  res.end(html);
-} catch (error) {
-  sendText(res, 404, 'Página no encontrada');
-}
-
+    // Toda ruta web no definida explícitamente recibe el 404 personalizado.
+    sendNotFound(res);
+    return;
   } catch (error) {
     if (res.headersSent || res.destroyed) return;
     if (error.statusCode === 413) { sendJSON(res, 413, { error: error.message }); return; }
