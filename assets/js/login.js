@@ -1,56 +1,50 @@
-const loginForm = document.getElementById("loginForm");
-const loginError = document.getElementById("loginError");
+(() => {
+  'use strict';
 
-loginForm.addEventListener("submit", async (event) => {
+  const form = document.getElementById('loginForm');
+  const username = document.getElementById('username');
+  const password = document.getElementById('password');
+  const button = document.getElementById('loginButton');
+  const error = document.getElementById('loginError');
+
+  if (!form || !username || !password || !button || !error) return;
+
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
+    error.textContent = '';
 
-    loginError.textContent = "";
-
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value;
-
-    if (!username || !password) {
-        loginError.textContent = "Completa todos los campos.";
-        return;
+    const cleanUsername = username.value.trim();
+    if (!cleanUsername || !password.value) {
+      error.textContent = 'Escribe tu usuario y contraseña.';
+      return;
     }
-
-    const button = loginForm.querySelector("button");
 
     button.disabled = true;
-    button.textContent = "Verificando...";
+    button.textContent = 'Verificando…';
 
     try {
-        const response = await fetch("/api/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: "same-origin",
-            body: JSON.stringify({
-                username,
-                password
-            })
-        });
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        cache: 'no-store',
+        body: JSON.stringify({ username: cleanUsername, password: password.value })
+      });
+      const result = await response.json().catch(() => ({}));
 
-        const data = await response.json();
+      if (!response.ok || !result.success) {
+        error.textContent = result.error || 'No fue posible iniciar sesión. Verifica tus datos.';
+        password.value = '';
+        password.focus();
+        return;
+      }
 
-        if (!response.ok) {
-            throw new Error(data.error || "No se pudo iniciar sesión.");
-        }
-
-        if (!data.csrf) {
-            throw new Error("El servidor no entregó el token de seguridad.");
-        }
-
-        sessionStorage.setItem("techlag_csrf", data.csrf);
-
-        window.location.href = "/admin";
-
-    } catch (error) {
-
-        loginError.textContent = error.message;
-
-        button.disabled = false;
-        button.textContent = "Iniciar sesión";
+      window.location.replace('/admin/');
+    } catch (_) {
+      error.textContent = 'No se pudo conectar con el servidor. Comprueba que TECH-LAG esté iniciado.';
+    } finally {
+      button.disabled = false;
+      button.innerHTML = 'Ingresar al panel <span aria-hidden="true">→</span>';
     }
-});
+  });
+})();

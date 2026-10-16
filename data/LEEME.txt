@@ -1,0 +1,3 @@
+El servidor guarda aquí el texto editable de Términos y Condiciones como terminos.txt.
+No hace falta crearlo manualmente: se inicializa leyendo el contenido existente de legal/terminos.html si ese archivo está presente.
+Haz respaldo del archivo en producción y no supongas persistencia en Render sin un disco persistente.

@@ -1,467 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>TECH-LAG | Administrador</title>
-
-    <link
-        rel="stylesheet"
-        href="/assets/css/admin.css"
-    >
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>TECH-LAG | Administración del catálogo</title>
+  <link rel="stylesheet" href="/assets/css/admin.css?v=20261016-1">
 </head>
-
-<body>
-
-    <div class="admin-layout">
-
-        <!-- BARRA LATERAL -->
-
-        <aside class="admin-sidebar">
-
-            <div class="admin-logo">
-                TECH<span>-LAG</span>
-            </div>
-
-            <p class="admin-label">
-                ADMINISTRACIÓN
-            </p>
-
-            <nav class="admin-nav">
-
-                <button
-                    class="nav-item active"
-                    data-section="dashboard"
-                >
-                    Dashboard
-                </button>
-
-                <button
-                    class="nav-item"
-                    data-section="marcas"
-                >
-                    Marcas
-                </button>
-
-                <button
-                    class="nav-item"
-                    data-section="modelos"
-                >
-                    Modelos
-                </button>
-
-                <button
-                    class="nav-item"
-                    data-section="servicios"
-                >
-                    Servicios
-                </button>
-
-                <button
-                    class="nav-item"
-                    data-section="precios"
-                >
-                    Precios
-                </button>
-
-                <button
-                    class="nav-item"
-                    data-section="errores"
-                >
-                    Centro de errores
-                </button>
-
-            </nav>
-
-            <button
-                id="logoutButton"
-                class="logout-button"
-            >
-                Cerrar sesión
-            </button>
-
-        </aside>
-
-
-        <!-- CONTENIDO -->
-
-        <main class="admin-content">
-
-            <header class="admin-header">
-
-                <div>
-                    <h1 id="sectionTitle">
-                        Dashboard
-                    </h1>
-
-                    <p>
-                        Administración de TECH-LAG
-                    </p>
-                </div>
-
-            </header>
-
-
-            <!-- DASHBOARD -->
-
-            <section
-                id="section-dashboard"
-                class="admin-section active"
-            >
-
-                <div class="stats-grid">
-
-                    <article class="stat-card">
-                        <span>Marcas</span>
-                        <strong id="totalMarcas">0</strong>
-                    </article>
-
-                    <article class="stat-card">
-                        <span>Modelos</span>
-                        <strong id="totalModelos">0</strong>
-                    </article>
-
-                    <article class="stat-card">
-                        <span>Servicios</span>
-                        <strong id="totalServicios">0</strong>
-                    </article>
-
-                    <article class="stat-card">
-                        <span>Precios</span>
-                        <strong id="totalPrecios">0</strong>
-                    </article>
-
-                </div>
-
-            </section>
-
-
-            <!-- MARCAS -->
-
-            <section
-                id="section-marcas"
-                class="admin-section"
-            >
-
-                <div class="section-header">
-
-                    <div>
-                        <h2>Marcas</h2>
-                        <p>Marcas disponibles en el cotizador.</p>
-                    </div>
-
-                    <button id="addMarcaButton">
-                        + Agregar marca
-                    </button>
-
-                </div>
-
-                <div id="marcasContainer"></div>
-
-            </section>
-
-
-            <!-- MODELOS -->
-
-            <section
-                id="section-modelos"
-                class="admin-section"
-            >
-
-                <div class="section-header">
-
-                    <div>
-                        <h2>Modelos</h2>
-                        <p>Modelos registrados.</p>
-                    </div>
-
-                    <button id="addModeloButton">
-                        + Agregar modelo
-                    </button>
-
-                </div>
-
-                <div id="modelosContainer"></div>
-
-            </section>
-
-
-            <!-- SERVICIOS -->
-
-            <section
-                id="section-servicios"
-                class="admin-section"
-            >
-
-                <div class="section-header">
-
-                    <div>
-                        <h2>Servicios</h2>
-                        <p>Servicios disponibles para cotización.</p>
-                    </div>
-
-                    <button id="addServicioButton">
-                        + Agregar servicio
-                    </button>
-
-                </div>
-
-                <div id="serviciosContainer"></div>
-
-            </section>
-
-
-            <!-- CENTRO DE ERRORES -->
-            <section id="section-errores" class="admin-section">
-                <div class="section-header">
-                    <div>
-                        <h2>Centro de errores</h2>
-                        <p>Incidentes HTTP registrados por el servidor. Se guardan solo fecha, código, método y ruta; no se almacenan tokens ni contraseñas.</p>
-                    </div>
-                    <div class="error-toolbar">
-                        <button type="button" id="refreshErrorsButton" class="secondary-button">Actualizar</button>
-                        <button type="button" id="clearErrorsButton" class="danger-button">Limpiar registros</button>
-                    </div>
-                </div>
-                <div class="error-stats-grid" id="errorStats">
-                    <article class="stat-card"><span>Errores registrados</span><strong id="errorTotal">0</strong></article>
-                    <article class="stat-card"><span>Errores 404</span><strong id="error404">0</strong></article>
-                    <article class="stat-card"><span>Errores 401 / 403</span><strong id="errorAuth">0</strong></article>
-                    <article class="stat-card"><span>Errores 500</span><strong id="error500">0</strong></article>
-                </div>
-                <div id="errorsContainer" class="errors-container">
-                    <p>Selecciona esta sección para cargar los registros.</p>
-                </div>
-                <p class="error-retention-note">Retención automática: hasta 30 días y 2.000 eventos; la vista muestra como máximo los 500 más recientes.</p>
-            </section>
-
-            <!-- PRECIOS -->
-
-            <section
-                id="section-precios"
-                class="admin-section"
-            >
-
-                <div class="section-header">
-
-                    <div>
-                        <h2>Precios</h2>
-                        <p>
-                            Modifica los precios utilizados por el cotizador.
-                        </p>
-                    </div>
-
-                    <button id="savePricesButton">
-                        Guardar cambios
-                    </button>
-
-                </div>
-
-                <div class="search-box">
-
-                    <input
-                        type="search"
-                        id="priceSearch"
-                        placeholder="Buscar marca, modelo o servicio..."
-                    >
-
-                </div>
-
-                <div id="preciosContainer"></div>
-
-            </section>
-
-
-            <div
-                id="adminMessage"
-                class="admin-message"
-            ></div>
-
-        </main>
-
-    </div>
-
-    <!-- =========================================
-     MODAL DE REGISTRO
-========================================= -->
-
-<div id="catalogModal" class="catalog-modal">
-
-    <div class="catalog-modal-backdrop"></div>
-
-    <div class="catalog-modal-card">
-
-        <div class="catalog-modal-header">
-
-            <div>
-                <span class="modal-eyebrow">
-                    CATÁLOGO TECH-LAG
-                </span>
-
-                <h2 id="modalTitle">
-                    Agregar registro
-                </h2>
-            </div>
-
-            <button
-                type="button"
-                id="closeModalButton"
-                class="modal-close"
-            >
-                ×
-            </button>
-
+<body class="admin-page">
+  <div class="admin-layout">
+    <aside class="admin-sidebar" aria-label="Navegación de administración">
+      <a class="admin-brand" href="/admin/" aria-label="TECH-LAG, inicio de administración">
+        <span class="brand-mark">TL</span>
+        <span class="brand-wordmark">TECH<span>-LAG</span><small>Panel de control</small></span>
+      </a>
+
+      <div class="sidebar-section-label">CATÁLOGO</div>
+      <nav class="admin-nav">
+        <button type="button" class="nav-item active" data-section="dashboard"><span class="nav-icon">▦</span> Resumen</button>
+        <button type="button" class="nav-item" data-section="marcas"><span class="nav-icon">◈</span> Marcas <span class="nav-count" id="navMarcas">0</span></button>
+        <button type="button" class="nav-item" data-section="modelos"><span class="nav-icon">▣</span> Modelos <span class="nav-count" id="navModelos">0</span></button>
+        <button type="button" class="nav-item" data-section="servicios"><span class="nav-icon">⌁</span> Servicios</button>
+        <button type="button" class="nav-item" data-section="precios"><span class="nav-icon">＄</span> Precios</button>
+      </nav>
+
+      <div class="sidebar-section-label tools-label">ANÁLISIS Y SISTEMA</div>
+      <nav class="admin-nav">
+        <button type="button" class="nav-item" data-section="consultas"><span class="nav-icon">⌁</span> Consultas</button>
+        <button type="button" class="nav-item" data-section="terminos"><span class="nav-icon">§</span> Términos y condiciones</button>
+        <button type="button" class="nav-item" data-section="errores"><span class="nav-icon">ⓘ</span> Centro de errores</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="session-indicator"><span class="status-dot"></span><span><strong>Sesión protegida</strong><small>Conectado como administrador</small></span></div>
+        <button type="button" id="logoutButton" class="logout-button"><span>↪</span> Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <main class="admin-content">
+      <header class="admin-header">
+        <div class="header-copy">
+          <p class="eyebrow" id="breadcrumb">TECH-LAG / RESUMEN</p>
+          <h1 id="sectionTitle">Resumen del catálogo</h1>
+          <p class="header-subtitle">Organiza las referencias y sus precios sin editar archivos manualmente.</p>
+        </div>
+        <div class="header-actions">
+          <span id="saveState" class="save-state is-saved"><span class="state-dot"></span><span id="saveStateText">Todos los cambios guardados</span></span>
+          <button type="button" id="saveChangesButton" class="button button-primary" disabled><span>↓</span> Guardar cambios</button>
+        </div>
+      </header>
+
+      <div id="adminMessage" class="toast" role="status" aria-live="polite"></div>
+
+      <section id="section-dashboard" class="admin-section active">
+        <div class="welcome-panel">
+          <div>
+            <span class="panel-kicker">CONTROL DEL CATÁLOGO</span>
+            <h2>Una estructura clara evita errores.</h2>
+            <p>Registra cada nivel en orden. No se puede crear un modelo sin elegir una marca existente ni un servicio sin elegir antes su modelo.</p>
+          </div>
+          <div class="welcome-mark" aria-hidden="true"><span>TL</span><i></i><i></i><i></i></div>
         </div>
 
+        <div class="stats-grid">
+          <article class="stat-card"><span class="stat-icon icon-violet">◈</span><span class="stat-label">Marcas</span><strong id="totalMarcas">0</strong><small>Fabricantes registrados</small></article>
+          <article class="stat-card"><span class="stat-icon icon-blue">▣</span><span class="stat-label">Modelos</span><strong id="totalModelos">0</strong><small>Dentro de sus marcas</small></article>
+          <article class="stat-card"><span class="stat-icon icon-teal">⌁</span><span class="stat-label">Tipos de servicio</span><strong id="totalServicios">0</strong><small>Nombres únicos en el catálogo</small></article>
+          <article class="stat-card"><span class="stat-icon icon-amber">＄</span><span class="stat-label">Precios / variantes</span><strong id="totalPrecios">0</strong><small>Servicio + calidad</small></article>
+        </div>
 
-        <form id="catalogForm">
+        <article class="content-card consultation-preview">
+          <div class="card-heading">
+            <div><span class="panel-kicker">INTERÉS DEL CATÁLOGO</span><h2>Qué consultan tus clientes</h2><p id="dashboardConsultaPeriodo">Consultas registradas durante los últimos 30 días.</p></div>
+            <button type="button" class="button button-secondary" data-go-section="consultas">Ver estadísticas →</button>
+          </div>
+          <div class="consultation-preview-grid">
+            <div class="consultation-total"><span>Consultas de precio</span><strong id="dashboardConsultaTotal">—</strong><small>Se cuentan cuando un cliente selecciona una combinación válida.</small></div>
+            <div class="consultation-top"><span class="panel-kicker">COMBINACIONES MÁS CONSULTADAS</span><div id="dashboardTopConsultas"><p class="empty-state">Cargando estadísticas…</p></div></div>
+          </div>
+        </article>
 
-            <input
-                type="hidden"
-                id="editIndex"
-                value=""
-            >
-
-
-            <div class="modal-form-grid">
-
-                <div class="modal-form-group">
-
-                    <label for="formMarca">
-                        Marca
-                    </label>
-
-                    <input
-                        type="text"
-                        id="formMarca"
-                        maxlength="80"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="modal-form-group">
-
-                    <label for="formModelo">
-                        Modelo
-                    </label>
-
-                    <input
-                        type="text"
-                        id="formModelo"
-                        maxlength="100"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="modal-form-group">
-
-                    <label for="formServicio">
-                        Servicio
-                    </label>
-
-                    <input
-                        type="text"
-                        id="formServicio"
-                        maxlength="80"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="modal-form-group">
-
-                    <label for="formCalidad">
-                        Calidad
-                    </label>
-
-                    <select
-                        id="formCalidad"
-                        required
-                    >
-
-                        <option value="generica">
-                            Genérica
-                        </option>
-
-                        <option value="oem">
-                            OEM / Premium
-                        </option>
-
-                        <option value="original">
-                            Original
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="modal-form-group modal-price-group">
-
-                    <label for="formPrecio">
-                        Precio
-                    </label>
-
-                    <input
-                        type="number"
-                        id="formPrecio"
-                        min="0"
-                        max="100000000"
-                        step="1"
-                        required
-                    >
-
-                </div>
-
+        <div class="dashboard-grid">
+          <article class="content-card hierarchy-card">
+            <div class="card-heading"><div><span class="panel-kicker">ORDEN DE REGISTRO</span><h2>Estructura del catálogo</h2></div><span class="mini-badge">Jerarquía obligatoria</span></div>
+            <div class="hierarchy-flow">
+              <div class="hierarchy-step"><span>01</span><strong>Marca</strong><small>Ej. Samsung</small></div><span class="flow-arrow">→</span>
+              <div class="hierarchy-step"><span>02</span><strong>Modelo</strong><small>Ej. Galaxy A54</small></div><span class="flow-arrow">→</span>
+              <div class="hierarchy-step"><span>03</span><strong>Tipo de servicio</strong><small>Ej. Cambio de pantalla</small></div><span class="flow-arrow">→</span>
+              <div class="hierarchy-step"><span>04</span><strong>Calidad y precio</strong><small>Genérica / OEM / original</small></div>
             </div>
+            <p class="inline-note"><span>ⓘ</span> Con el CSV actual, una marca o modelo empieza a existir al guardar su primer registro de servicio y precio. El formulario te pedirá los datos necesarios de una sola vez.</p>
+          </article>
+          <article class="content-card quick-actions-card">
+            <div class="card-heading"><div><span class="panel-kicker">ACCESOS RÁPIDOS</span><h2>¿Qué necesitas agregar?</h2></div></div>
+            <button type="button" class="quick-action" data-action="create-brand"><span class="quick-icon">＋</span><span><strong>Nueva marca</strong><small>Incluye su primer modelo y servicio</small></span><span class="quick-chevron">›</span></button>
+            <button type="button" class="quick-action" data-action="create-model"><span class="quick-icon">＋</span><span><strong>Nuevo modelo</strong><small>Primero elige la marca existente</small></span><span class="quick-chevron">›</span></button>
+            <button type="button" class="quick-action" data-action="create-service"><span class="quick-icon">＋</span><span><strong>Nuevo servicio</strong><small>Dentro de un modelo registrado</small></span><span class="quick-chevron">›</span></button>
+            <button type="button" class="quick-action" data-action="create-variant"><span class="quick-icon">＋</span><span><strong>Otra calidad / precio</strong><small>Añade una variante al servicio</small></span><span class="quick-chevron">›</span></button>
+          </article>
+        </div>
+        <article class="content-card safety-card"><span class="safety-icon">✓</span><div><strong>Los cambios no se publican hasta guardarlos</strong><p>Puedes corregir varios registros antes de enviarlos al servidor. Si sales con cambios pendientes, el navegador te advertirá. Las eliminaciones de marcas, modelos y servicios muestran cuántos registros relacionados se quitarán.</p></div></article>
+      </section>
 
+      <section id="section-marcas" class="admin-section">
+        <div class="section-toolbar"><div><span class="panel-kicker">NIVEL 1</span><h2>Marcas</h2><p>Renombrar una marca actualiza todos sus modelos y precios. Eliminarla quita toda su información relacionada.</p></div><button type="button" id="addMarcaButton" class="button button-primary">＋ Nueva marca</button></div>
+        <div class="filter-row"><label class="search-field"><span>⌕</span><input id="brandSearch" type="search" placeholder="Buscar marca..." autocomplete="off"></label><span class="result-count" id="brandCount">0 marcas</span></div>
+        <div id="marcasContainer" class="entity-grid"></div>
+      </section>
 
-            <div
-                id="modalError"
-                class="modal-error"
-            ></div>
+      <section id="section-modelos" class="admin-section">
+        <div class="section-toolbar"><div><span class="panel-kicker">NIVEL 2 · CONSULTA</span><h2>Modelos por marca</h2><p>Vista de consulta. Para crear modelos, entra a Marcas y pulsa “＋ Modelo” dentro de la marca correspondiente.</p></div><button type="button" class="button button-primary" data-go-section="marcas">Ir a Marcas para agregar un modelo</button></div>
+        <div class="filter-row"><label class="search-field"><span>⌕</span><input id="modelSearch" type="search" placeholder="Buscar marca o modelo..." autocomplete="off"></label><span class="result-count" id="modelCount">0 modelos</span></div>
+        <div id="modelosContainer" class="entity-list"></div>
+      </section>
 
+      <section id="section-servicios" class="admin-section">
+        <div class="section-toolbar"><div><span class="panel-kicker">TIPOS ÚNICOS</span><h2>Servicios</h2><p>Cada tipo de servicio aparece una sola vez, aunque esté disponible para muchos modelos. Renombrarlo o eliminarlo afecta todos sus usos.</p></div><button type="button" id="addServicioButton" class="button button-primary">＋ Añadir a modelo</button></div>
+        <div class="filter-row"><label class="search-field"><span>⌕</span><input id="serviceSearch" type="search" placeholder="Buscar tipo de servicio..." autocomplete="off"></label><span class="result-count" id="serviceCount">0 servicios únicos</span><button type="button" id="addVariantButton" class="button button-secondary">＋ Calidad / precio</button></div>
+        <div id="serviciosContainer" class="entity-list"></div>
+      </section>
 
-            <div class="modal-actions">
+      <section id="section-precios" class="admin-section">
+        <div class="section-toolbar"><div><span class="panel-kicker">VALORES DEL COTIZADOR</span><h2>Precios</h2><p>Los precios se identifican por marca, modelo, servicio y calidad. Las combinaciones duplicadas no se permiten.</p></div><button type="button" id="addPriceVariantButton" class="button button-primary">＋ Agregar precio</button></div>
+        <div class="filter-row"><label class="search-field search-field-wide"><span>⌕</span><input type="search" id="priceSearch" placeholder="Buscar marca, modelo, servicio o calidad..." autocomplete="off"></label><span class="result-count" id="priceCount">0 registros</span></div>
+        <div id="preciosContainer" class="table-card"></div>
+        <p class="table-footnote">Editar un precio modifica el borrador local. Pulsa <strong>Guardar cambios</strong> para que el servidor lo escriba en el catálogo.</p>
+      </section>
 
-                <button
-                    type="button"
-                    id="cancelModalButton"
-                    class="modal-cancel"
-                >
-                    Cancelar
-                </button>
+      <section id="section-consultas" class="admin-section">
+        <div class="section-toolbar"><div><span class="panel-kicker">ANÁLISIS DE USO</span><h2>Consultas del cotizador</h2><p>Qué equipos, repuestos y servicios consultan con más frecuencia. Solo se registran las selecciones válidas de catálogo; no se guardan nombres, teléfonos ni IP.</p></div><div class="toolbar-actions"><label class="period-select">Periodo <select id="consultaPeriodo"><option value="7">7 días</option><option value="30" selected>30 días</option><option value="90">90 días</option></select></label><button type="button" id="refreshConsultasButton" class="button button-secondary">↻ Actualizar</button></div></div>
+        <div class="stats-grid consultation-stats-grid">
+          <article class="stat-card"><span class="stat-label">Consultas en el periodo</span><strong id="consultaTotal">0</strong><small id="consultaPeriodoTexto">Últimos 30 días</small></article>
+          <article class="stat-card"><span class="stat-label">Repuesto más consultado</span><strong id="consultaRepuestoTop" class="stat-text-value">—</strong><small id="consultaRepuestoCount">Sin datos todavía</small></article>
+          <article class="stat-card"><span class="stat-label">Servicio más consultado</span><strong id="consultaServicioTop" class="stat-text-value">—</strong><small id="consultaServicioCount">Sin datos todavía</small></article>
+        </div>
+        <div class="consultation-tables-grid">
+          <article class="content-card"><div class="card-heading"><div><h3>Repuestos y combinaciones más consultados</h3><p>Marca, modelo, tipo de servicio y calidad seleccionada.</p></div></div><div id="consultaTopRepuestos" class="table-card"><p class="empty-state">Selecciona Actualizar para cargar datos.</p></div></article>
+          <article class="content-card"><div class="card-heading"><div><h3>Tipos de servicio más consultados</h3><p>Conteo global de cada tipo, agrupado sin duplicados.</p></div></div><div id="consultaTopServicios" class="table-card"><p class="empty-state">Selecciona Actualizar para cargar datos.</p></div></article>
+        </div>
+        <p class="table-footnote">Los conteos empiezan cuando se instala la versión que registra consultas. No reconstruyen consultas históricas. En un hosting con disco temporal, los registros se reinician al recrearse el servicio.</p>
+      </section>
 
-                <button
-                    type="submit"
-                    class="modal-save"
-                >
-                    Guardar registro
-                </button>
+      <section id="section-terminos" class="admin-section">
+        <div class="section-toolbar"><div><span class="panel-kicker">CONTENIDO PÚBLICO</span><h2>Términos y condiciones</h2><p>Edita el texto que verán los clientes en la página legal del cotizador. Los cambios se publican al guardarlos.</p></div><div class="toolbar-actions"><button type="button" id="reloadTermsButton" class="button button-secondary">Volver a cargar</button><button type="button" id="saveTermsButton" class="button button-primary" disabled>Guardar Términos</button></div></div>
+        <article class="content-card terms-editor-card"><div class="terms-editor-toolbar"><div><strong>Editor de contenido</strong><p>Usa una línea en blanco para separar párrafos. Las líneas que empiecen por <code># </code> se muestran como título de sección.</p></div><span id="termsSaveStatus" class="save-state is-saved"><span class="state-dot"></span><span id="termsSaveStatusText">Cargando contenido…</span></span></div><label class="sr-only" for="termsEditor">Contenido de Términos y Condiciones</label><textarea id="termsEditor" rows="20" maxlength="50000" spellcheck="true" placeholder="Carga el contenido actual para poder editarlo…" disabled></textarea><div class="terms-editor-footer"><span id="termsCharCount">0 / 50.000 caracteres</span><span>Consejo: guarda y abre la página pública para revisar el resultado.</span></div><div id="termsMessage" class="terms-message" role="status" aria-live="polite"></div><div class="terms-preview-link"><a href="/legal/terminos.html" target="_blank" rel="noopener">Abrir Términos públicos ↗</a></div></article>
+      </section>
 
-            </div>
+      <section id="section-errores" class="admin-section">
+        <div class="section-toolbar"><div><span class="panel-kicker">DIAGNÓSTICO</span><h2>Centro de errores</h2><p>Consulta incidentes HTTP del servidor. El registro evita almacenar contraseñas, tokens y cookies.</p></div><div class="toolbar-actions"><button type="button" id="refreshErrorsButton" class="button button-secondary">↻ Actualizar</button><button type="button" id="clearErrorsButton" class="button button-danger">Limpiar registros</button></div></div>
+        <div class="stats-grid error-stats-grid" id="errorStats">
+          <article class="stat-card"><span class="stat-label">Errores registrados</span><strong id="errorTotal">0</strong></article>
+          <article class="stat-card"><span class="stat-label">Errores 404</span><strong id="error404">0</strong></article>
+          <article class="stat-card"><span class="stat-label">Errores 401 / 403</span><strong id="errorAuth">0</strong></article>
+          <article class="stat-card"><span class="stat-label">Errores 500</span><strong id="error500">0</strong></article>
+        </div>
+        <div id="errorsContainer" class="table-card"><p class="empty-state">Selecciona esta sección para cargar los registros.</p></div>
+        <p class="table-footnote">Retención automática: hasta 30 días y 2.000 eventos. La vista presenta los últimos 500 registros como máximo.</p>
+      </section>
+    </main>
+  </div>
 
-        </form>
+  <div id="catalogModal" class="modal-shell" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="true"></div>
+    <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="modal-header"><div><span class="panel-kicker">EDITOR DEL CATÁLOGO</span><h2 id="modalTitle">Agregar registro</h2><p id="modalDescription">Completa los datos para continuar.</p></div><button type="button" id="closeModalButton" class="modal-x" aria-label="Cerrar ventana">×</button></header>
+      <form id="catalogForm" novalidate>
+        <div id="modalFields" class="modal-fields"></div>
+        <div id="modalError" class="modal-error" role="alert" aria-live="polite"></div>
+        <footer class="modal-actions"><button type="button" id="cancelModalButton" class="button button-secondary">Cancelar</button><button type="submit" id="modalSaveButton" class="button button-primary">Guardar registro</button></footer>
+      </form>
+    </section>
+  </div>
 
-    </div>
+  <div id="confirmModal" class="modal-shell confirm-shell" aria-hidden="true">
+    <div class="modal-backdrop" data-close-confirm="true"></div>
+    <section class="modal-panel confirm-panel" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <span class="confirm-warning-icon">!</span><h2 id="confirmTitle">Confirmar eliminación</h2><p id="confirmMessage"></p><div id="confirmDetails" class="confirm-details"></div>
+      <footer class="modal-actions"><button type="button" id="cancelConfirmButton" class="button button-secondary">Cancelar</button><button type="button" id="acceptConfirmButton" class="button button-danger">Sí, eliminar</button></footer>
+    </section>
+  </div>
 
-</div>
-
-    <script src="/assets/js/admin.js"></script>
-
+  <script src="/assets/js/admin.js?v=20261016-4" defer></script>
 </body>
-
 </html>

@@ -43,12 +43,19 @@ const PORT = Number(process.env.PORT) || 3000;
 const ROOT = path.resolve(__dirname);
 
 const DATA_FILE = path.join(ROOT, 'data.csv');
+const DATA_DIR = path.join(ROOT, 'data');
+const TERMS_FILE = path.join(DATA_DIR, 'terminos.txt');
 
 const BACKUP_DIR = path.join(ROOT, 'backups');
 
 const LOG_DIR = path.join(ROOT, 'logs');
 
 const ERROR_LOG_FILE = path.join(LOG_DIR, 'errors.jsonl');
+const CONSULTATIONS_FILE = path.join(LOG_DIR, 'consultas.jsonl');
+const MAX_CONSULTATIONS = 15000;
+const CONSULTATION_RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
+const CONSULTATION_WINDOW_MS = 10 * 60 * 1000;
+const CONSULTATION_MAX_ATTEMPTS = 80;
 
 const MAX_ERROR_LOG_BYTES = 2 * 1024 * 1024;
 
@@ -75,6 +82,7 @@ const LOGIN_MAX_ATTEMPTS = 10;
 const sessions = new Map();
 
 const loginAttempts = new Map();
+const consultationAttempts = new Map();
 
 
 
@@ -159,6 +167,7 @@ if (!/^scrypt:[a-f0-9]+:[a-f0-9]{128}$/i.test(ADMIN_PASSWORD_HASH)) {
 if (!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR, { recursive: true });
 
 if (!fs.existsSync(LOG_DIR)) fs.mkdirSync(LOG_DIR, { recursive: true });
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
 
 
@@ -604,6 +613,19 @@ function hasUnsafeSpreadsheetPrefix(value) {
 
 }
 
+function normalizeCatalogPart(value) {
+  return String(value ?? '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').toLocaleLowerCase('es');
+}
+function duplicateCatalogRow(rows) {
+  const seen = new Set();
+  for (const row of rows) {
+    const key = [row.marca, row.modelo, row.servicio, row.calidad].map(normalizeCatalogPart).join('\u0000');
+    if (seen.has(key)) return row;
+    seen.add(key);
+  }
+  return null;
+}
+
 function validateRow(row) {
 
   if (!row || typeof row !== 'object' || Array.isArray(row)) return false;
@@ -765,12 +787,201 @@ const cleanupTimer = setInterval(() => {
   for (const [id, session] of sessions) if (now >= session.expiresAt) sessions.delete(id);
 
   for (const [key, record] of loginAttempts) if (now - record.windowStart >= LOGIN_WINDOW_MS) loginAttempts.delete(key);
+  for (const [key, record] of consultationAttempts) if (now - record.windowStart >= CONSULTATION_WINDOW_MS) consultationAttempts.delete(key);
 
 }, 10 * 60 * 1000);
 
 cleanupTimer.unref();
 
 
+
+function atomicWriteFile(filePath, content) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  const temporaryFile = `${filePath}.${crypto.randomBytes(6).toString('hex')}.tmp`;
+  try {
+    fs.writeFileSync(temporaryFile, content, { encoding: 'utf8', flag: 'wx', mode: 0o600 });
+    fs.renameSync(temporaryFile, filePath);
+  } catch (error) {
+    try { fs.unlinkSync(temporaryFile); } catch { /* temporal ausente */ }
+    throw error;
+  }
+}
+
+function decodeBasicHtmlEntities(value) {
+  return String(value)
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#0*39;/gi, "'")
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => {
+      const number = parseInt(code, 16);
+      return Number.isFinite(number) && number <= 0x10ffff ? String.fromCodePoint(number) : '';
+    })
+    .replace(/&#([0-9]+);/g, (_, code) => {
+      const number = Number(code);
+      return Number.isFinite(number) && number <= 0x10ffff ? String.fromCodePoint(number) : '';
+    });
+}
+
+function extractTermsTextFromHtml(html) {
+  let source = String(html || '');
+  const main = source.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
+  const article = source.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i);
+  const body = source.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i);
+  source = main ? main[1] : (article ? article[1] : (body ? body[1] : source));
+  source = source
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<(nav|header|footer)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(p|h[1-6]|li|section|article|div|main|ul|ol)>/gi, '\n')
+    .replace(/<li\b[^>]*>/gi, '• ')
+    .replace(/<[^>]+>/g, ' ');
+  source = decodeBasicHtmlEntities(source)
+    .replace(/[\t\f\v ]+/g, ' ')
+    .replace(/ *\n */g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+    .join('\n');
+  return source.slice(0, 50000);
+}
+
+function defaultTermsText() {
+  const existingPage = path.join(ROOT, 'legal', 'terminos.html');
+  if (fs.existsSync(existingPage)) {
+    try {
+      const extracted = extractTermsTextFromHtml(fs.readFileSync(existingPage, 'utf8'));
+      if (extracted.length >= 20) return extracted;
+    } catch (error) {
+      console.error('No se pudo leer la página original de términos:', error.message);
+    }
+  }
+  return [
+    '# Términos y condiciones',
+    '',
+    'Estas condiciones describen el uso del cotizador TECH-LAG. Antes de publicar una versión definitiva, revisa y adapta el texto a las políticas reales del negocio.',
+    '',
+    '## Cotizaciones y precios estimados',
+    'Los valores mostrados en el cotizador son estimaciones y pueden cambiar después de revisar físicamente el equipo y confirmar el repuesto requerido.',
+    '',
+    '## Diagnóstico y reparación',
+    'La reparación, disponibilidad del repuesto, plazo y precio final deben confirmarse con TECH-LAG antes de iniciar el servicio.',
+    '',
+    '## Contacto y aceptación',
+    'Al continuar con una solicitud, el cliente declara haber leído las condiciones publicadas. Mantén esta sección actualizada con las condiciones comerciales vigentes.'
+  ].join('\n');
+}
+
+function readTermsText() {
+  try {
+    if (fs.existsSync(TERMS_FILE)) return fs.readFileSync(TERMS_FILE, 'utf8').slice(0, 50000);
+  } catch (error) {
+    console.error('No se pudieron leer los términos guardados:', error.message);
+  }
+  return defaultTermsText();
+}
+
+function escapeHtmlServer(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function termsTextToHtml(content) {
+  const blocks = String(content || '').trim().split(/\n\s*\n/).filter(Boolean);
+  return blocks.map(block => {
+    const lines = block.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    if (!lines.length) return '';
+    if (/^#{1,2}\s+/.test(lines[0])) {
+      const heading = lines[0].replace(/^#{1,2}\s+/, '');
+      return `<h2>${escapeHtmlServer(heading)}</h2>${lines.slice(1).length ? `<p>${lines.slice(1).map(escapeHtmlServer).join('<br>')}</p>` : ''}`;
+    }
+    if (lines.every(line => /^[-•]\s+/.test(line))) {
+      return `<ul>${lines.map(line => `<li>${escapeHtmlServer(line.replace(/^[-•]\s+/, ''))}</li>`).join('')}</ul>`;
+    }
+    return `<p>${lines.map(escapeHtmlServer).join('<br>')}</p>`;
+  }).join('\n');
+}
+
+function sendTermsPage(res) {
+  const content = readTermsText();
+  const html = `<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1020"><title>Términos y condiciones | TECH-LAG</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#111a2c;--line:#29364d;--text:#edf2ff;--muted:#a4b0c4;--accent:#a99eff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#17213a 0,var(--bg) 48%);color:var(--text);font:16px/1.75 Inter,system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}.site-header{border-bottom:1px solid var(--line);background:rgba(9,14,27,.78)}.site-header-inner{max-width:960px;padding:20px 24px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{font-weight:850;letter-spacing:.03em}.logo span{color:var(--accent)}nav{display:flex;gap:18px;flex-wrap:wrap}a{color:var(--accent);text-decoration:none;font-weight:650}a:hover{text-decoration:underline}.page{width:min(900px,calc(100% - 32px));margin:48px auto 64px}.page-kicker{text-transform:uppercase;letter-spacing:.16em;font-size:.75rem;font-weight:750;color:var(--accent)}h1{font-size:clamp(2rem,5vw,3.3rem);line-height:1.15;letter-spacing:-.04em;margin:.55rem 0 1.5rem}.terms-content{background:linear-gradient(145deg,rgba(17,26,44,.98),rgba(14,21,36,.96));border:1px solid var(--line);border-radius:22px;padding:clamp(22px,5vw,46px);box-shadow:0 20px 70px #0004;overflow-wrap:anywhere}.terms-content h2{font-size:1.2rem;line-height:1.4;margin:1.7rem 0 .45rem;color:#dcd7ff}.terms-content h2:first-child{margin-top:0}.terms-content p{margin:.7rem 0;color:#d5deed}.terms-content ul{padding-left:1.4rem;color:#d5deed}.page-footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:24px;color:var(--muted);font-size:.85rem}@media(max-width:560px){.site-header-inner{align-items:flex-start;flex-direction:column}.page{margin-top:30px}.terms-content{border-radius:16px}}
+</style></head><body><header class="site-header"><div class="site-header-inner"><a class="logo" href="/">TECH<span>-LAG</span></a><nav aria-label="Navegación"><a href="/">Inicio</a><a href="/cotizador.html">Cotizador</a></nav></div></header><main class="page"><span class="page-kicker">Información legal</span><h1>Términos y condiciones</h1><article class="terms-content">${termsTextToHtml(content)}</article><footer class="page-footer"><span>TECH-LAG · Información para clientes</span><a href="/cotizador.html">Volver al cotizador →</a></footer></main></body></html>`;
+  res.setHeader('Cache-Control', 'no-store');
+  sendText(res, 200, html, 'text/html; charset=utf-8');
+}
+
+function readConsultations() {
+  try {
+    if (!fs.existsSync(CONSULTATIONS_FILE)) return [];
+    return fs.readFileSync(CONSULTATIONS_FILE, 'utf8')
+      .split(/\r?\n/).filter(Boolean)
+      .map(line => { try { return JSON.parse(line); } catch { return null; } })
+      .filter(item => item && Number.isFinite(Date.parse(item.timestamp)));
+  } catch (error) {
+    console.error('No se pudieron leer las consultas:', error.message);
+    return [];
+  }
+}
+
+function pruneConsultations() {
+  const cutoff = Date.now() - CONSULTATION_RETENTION_MS;
+  const entries = readConsultations()
+    .filter(item => Date.parse(item.timestamp) >= cutoff)
+    .slice(-MAX_CONSULTATIONS);
+  try {
+    atomicWriteFile(CONSULTATIONS_FILE, entries.map(item => JSON.stringify(item)).join('\n') + (entries.length ? '\n' : ''));
+  } catch (error) {
+    console.error('No se pudieron depurar las consultas:', error.message);
+  }
+}
+
+function allowConsultationRequest(req) {
+  const key = req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  let record = consultationAttempts.get(key);
+  if (!record || now - record.windowStart >= CONSULTATION_WINDOW_MS) {
+    record = { count: 0, windowStart: now };
+  }
+  record.count++;
+  consultationAttempts.set(key, record);
+  return record.count <= CONSULTATION_MAX_ATTEMPTS;
+}
+
+function getConsultationAnalytics(days = 30) {
+  const now = Date.now();
+  const cutoff = now - days * 24 * 60 * 60 * 1000;
+  const entries = readConsultations().filter(item => Date.parse(item.timestamp) >= cutoff);
+  const itemGroups = new Map();
+  const serviceGroups = new Map();
+  for (const item of entries) {
+    const itemKey = [item.marca, item.modelo, item.servicio, item.calidad].join('\u0000');
+    const itemGroup = itemGroups.get(itemKey) || { marca: item.marca, modelo: item.modelo, servicio: item.servicio, calidad: item.calidad, consultas: 0 };
+    itemGroup.consultas++;
+    itemGroups.set(itemKey, itemGroup);
+
+    const serviceKey = String(item.servicio).toLocaleLowerCase('es');
+    const serviceGroup = serviceGroups.get(serviceKey) || { servicio: item.servicio, consultas: 0, modelKeys: new Set() };
+    serviceGroup.consultas++;
+    serviceGroup.modelKeys.add(`${item.marca}\u0000${item.modelo}`);
+    serviceGroups.set(serviceKey, serviceGroup);
+  }
+  const topRepuestos = [...itemGroups.values()].sort((a, b) => b.consultas - a.consultas).slice(0, 20);
+  const topServicios = [...serviceGroups.values()]
+    .map(item => ({ servicio: item.servicio, consultas: item.consultas, modelos: item.modelKeys.size }))
+    .sort((a, b) => b.consultas - a.consultas).slice(0, 20);
+  return { days, total: entries.length, topRepuestos, topServicios };
+}
 
 const server = http.createServer(async (req, res) => {
 
@@ -934,6 +1145,101 @@ const server = http.createServer(async (req, res) => {
 
 
 
+    // Registrar una consulta válida del cotizador. No se conserva IP ni información personal.
+    if (pathname === '/api/consultas' && req.method === 'POST') {
+      if (!allowConsultationRequest(req)) {
+        sendJSON(res, 429, { error: 'Demasiadas consultas en un periodo corto.' });
+        return;
+      }
+      const body = await readBody(req);
+      const fields = ['marca', 'modelo', 'servicio', 'calidad'];
+      if (fields.some(field => typeof body[field] !== 'string' || !body[field].trim() || body[field].length > 100) || !Number.isSafeInteger(Number(body.precio)) || Number(body.precio) <= 0 || Number(body.precio) > 100000000) {
+        sendJSON(res, 400, { error: 'Consulta incompleta o inválida.' });
+        return;
+      }
+      if (!fs.existsSync(DATA_FILE)) {
+        sendJSON(res, 503, { error: 'Catálogo no disponible.' });
+        return;
+      }
+      const catalog = csvToRows(fs.readFileSync(DATA_FILE, 'utf8'));
+      const match = catalog.find(row => row.marca === body.marca.trim() && row.modelo === body.modelo.trim() && row.servicio === body.servicio.trim() && row.calidad === body.calidad.trim() && Number(row.precio) === Number(body.precio));
+      if (!match) {
+        sendJSON(res, 409, { error: 'La combinación ya no coincide con el catálogo actual.' });
+        return;
+      }
+      try {
+        fs.appendFileSync(CONSULTATIONS_FILE, JSON.stringify({
+          timestamp: new Date().toISOString(),
+          marca: match.marca,
+          modelo: match.modelo,
+          servicio: match.servicio,
+          calidad: match.calidad,
+          precio: Number(match.precio)
+        }) + '\n', { encoding: 'utf8', mode: 0o600 });
+        const stat = fs.statSync(CONSULTATIONS_FILE);
+        if (stat.size > 4 * 1024 * 1024) pruneConsultations();
+      } catch (error) {
+        console.error('No se pudo guardar la consulta:', error.message);
+        sendJSON(res, 500, { error: 'No se pudo registrar la consulta.' });
+        return;
+      }
+      sendJSON(res, 202, { success: true });
+      return;
+    }
+
+    // Estadísticas de uso disponibles solo para el administrador autenticado.
+    if (pathname === '/api/admin/consultas' && req.method === 'GET') {
+      const session = requireAuth(req, res);
+      if (!session) return;
+      const requestedDays = Number(url.searchParams.get('days') || 30);
+      const days = [7, 30, 90].includes(requestedDays) ? requestedDays : 30;
+      const cutoff = Date.now() - CONSULTATION_RETENTION_MS;
+      if (readConsultations().some(item => Date.parse(item.timestamp) < cutoff)) pruneConsultations();
+      sendJSON(res, 200, getConsultationAnalytics(days));
+      return;
+    }
+
+    // Leer términos y condiciones actuales para el editor autenticado.
+    if (pathname === '/api/admin/terminos' && req.method === 'GET') {
+      const session = requireAuth(req, res);
+      if (!session) return;
+      sendJSON(res, 200, { content: readTermsText() });
+      return;
+    }
+
+    // Guardar el texto legal como texto plano; el servidor lo escapa al publicarlo para evitar HTML/XSS.
+    if (pathname === '/api/admin/terminos' && req.method === 'PUT') {
+      const session = requireAuth(req, res);
+      if (!session) return;
+      if (!checkCSRF(req, session)) {
+        sendJSON(res, 403, { error: 'CSRF inválido' });
+        return;
+      }
+      const body = await readBody(req);
+      if (typeof body.content !== 'string') {
+        sendJSON(res, 400, { error: 'El contenido debe ser texto.' });
+        return;
+      }
+      const content = body.content.trim();
+      if (content.length < 20 || content.length > 50000) {
+        sendJSON(res, 400, { error: 'El contenido debe tener entre 20 y 50.000 caracteres.' });
+        return;
+      }
+      try {
+        if (fs.existsSync(TERMS_FILE)) {
+          const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+          fs.copyFileSync(TERMS_FILE, path.join(BACKUP_DIR, `terminos-${timestamp}.txt`), fs.constants.COPYFILE_EXCL);
+        }
+        atomicWriteFile(TERMS_FILE, content + '\n');
+      } catch (error) {
+        console.error('No se pudieron guardar los términos:', error.message);
+        sendJSON(res, 500, { error: 'No se pudo guardar el contenido legal.' });
+        return;
+      }
+      sendJSON(res, 200, { success: true, length: content.length });
+      return;
+    }
+
     if (pathname === '/api/catalogo' && req.method === 'GET') {
 
       if (!fs.existsSync(DATA_FILE)) { sendJSON(res, 500, { error: 'Catálogo no disponible' }); return; }
@@ -999,6 +1305,12 @@ const server = http.createServer(async (req, res) => {
       });
 
       if (!rows.every(validateRow)) { sendJSON(res, 400, { error: 'Uno o más registros son inválidos' }); return; }
+
+      const duplicate = duplicateCatalogRow(rows);
+      if (duplicate) {
+        sendJSON(res, 409, { error: `Combinación duplicada: ${duplicate.marca} ${duplicate.modelo} · ${duplicate.servicio} · ${duplicate.calidad}. Cada calidad solo puede registrarse una vez para el mismo servicio del modelo.` });
+        return;
+      }
 
       saveRows(rows);
 
@@ -1083,6 +1395,12 @@ const server = http.createServer(async (req, res) => {
 
 
     // Rutas limpias y compatibilidad con las URL anteriores.
+
+    // La página pública de términos se construye con el texto editable desde administración.
+    if ((pathname === '/legal/terminos' || pathname === '/legal/terminos.html') && req.method === 'GET') {
+      sendTermsPage(res);
+      return;
+    }
 
     const pageRoutes = new Map([
 

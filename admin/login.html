@@ -1,71 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>TECH-LAG | Administración</title>
-
-    <link rel="stylesheet" href="/assets/css/admin.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#080b13">
+  <title>TECH-LAG | Acceso de administración</title>
+  <link rel="stylesheet" href="/assets/css/admin.css?v=20261016-1">
 </head>
-
-<body class="login-page">
-
-    <main class="login-container">
-
-        <section class="login-card">
-
-            <div class="login-logo">
-                TECH<span>-LAG</span>
-            </div>
-
-            <p class="login-subtitle">
-                Panel de administración
-            </p>
-
-            <form id="loginForm">
-
-                <div class="form-group">
-                    <label for="username">Usuario</label>
-
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        autocomplete="username"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        autocomplete="current-password"
-                        required
-                    >
-                </div>
-
-                <button type="submit" class="login-button">
-                    Iniciar sesión
-                </button>
-
-                <p id="loginError" class="login-error"></p>
-
-            </form>
-
-            <a href="/" class="back-link">
-                ← Volver a TECH-LAG
-            </a>
-
-        </section>
-
-    </main>
-
-    <script src="/assets/js/login.js"></script>
-
+<body>
+  <main class="login-page">
+    <div class="login-container">
+      <section class="login-card" aria-labelledby="loginTitle">
+        <header class="login-brand">
+          <p class="login-logo">TECH<span>-LAG</span></p>
+          <p class="login-subtitle">Acceso privado al panel de administración</p>
+        </header>
+        <form id="loginForm" method="post" action="/admin/login" novalidate>
+          <div class="form-group">
+            <label for="username">Usuario</label>
+            <input id="username" name="username" type="text" autocomplete="username" maxlength="100" placeholder="Tu usuario" required autofocus>
+          </div>
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" maxlength="200" placeholder="Tu contraseña" required>
+          </div>
+          <button class="login-button" id="loginButton" type="submit">Ingresar al panel <span aria-hidden="true">→</span></button>
+          <p class="login-error" id="loginError" role="alert" aria-live="polite"></p>
+        </form>
+        <a class="back-link" href="/">← Volver a TECH-LAG</a>
+      </section>
+      <p class="login-footnote">Área exclusiva para administración · TECH-LAG</p>
+    </div>
+  </main>
+  <script src="/assets/js/login.js?v=20261016-2" defer></script>
 </body>
 </html>

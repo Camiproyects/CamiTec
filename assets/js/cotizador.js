@@ -306,12 +306,35 @@ calidadSelect.addEventListener("change", () => {
 
         if (resultado) {
             precioActual = Number(resultado.precio);
+            // Registra una consulta anónima cuando el cliente selecciona una combinación válida.
+            // El servidor vuelve a validar el precio contra el catálogo y no guarda datos personales.
+            registrarConsulta({ marca, modelo, servicio, calidad, precio: precioActual });
         }
     }
 
     actualizarPrecio();
     actualizarWhatsApp();
 });
+
+let ultimaConsultaRegistrada = '';
+let ultimoMomentoConsulta = 0;
+function registrarConsulta(consulta) {
+    if (!consulta || !consulta.marca || !consulta.modelo || !consulta.servicio || !consulta.calidad || !(Number(consulta.precio) > 0)) return;
+    const key = [consulta.marca, consulta.modelo, consulta.servicio, consulta.calidad, consulta.precio].join('\u0000');
+    const now = Date.now();
+    // Evita duplicar un mismo evento si el navegador dispara dos cambios seguidos.
+    if (key === ultimaConsultaRegistrada && now - ultimoMomentoConsulta < 2500) return;
+    ultimaConsultaRegistrada = key;
+    ultimoMomentoConsulta = now;
+    fetch('/api/consultas', {
+        method: 'POST',
+        credentials: 'same-origin',
+        cache: 'no-store',
+        keepalive: true,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(consulta)
+    }).catch(error => console.warn('No se pudo registrar la consulta anónima:', error));
+}
 
 function actualizarPrecio() {
     precioElement.textContent = formatCOP(precioActual);
